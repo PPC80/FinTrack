@@ -1,0 +1,40 @@
+---
+description: FinTrack project tech stack, structure, and naming conventions
+alwaysApply: true
+---
+
+# Project Overview
+
+- **App:** FinTrack — personal finance + nutrition/macro tracker
+- **Stack:** Laravel 12, Inertia.js v2, React 19, TypeScript (strict), Tailwind v4, shadcn/ui, PostgreSQL
+- **Auth:** Laravel Breeze
+- **Testing:** Pest PHP
+- **Architecture:** Monolith, SPA-like via Inertia. Two modules: Finance, Nutrition
+- **User:** Single user, no multi-tenancy
+- **Laravel 12 structure** — no kernel.php
+
+## Directory Conventions
+
+- Pages: `resources/js/Pages/{Module}/`
+- Components: `resources/js/Components/{Domain}/{Specific}/`
+- Form inputs: `resources/js/Components/Forms/Inputs/{ComponentName}/`
+- Hooks: `resources/js/hooks/use{Purpose}.ts`
+- Services: `app/Services/{Domain}/` (Finance/, Nutrition/)
+- Actions: `app/Actions/`
+
+## Naming Conventions
+
+- Components/classes: PascalCase
+- Functions/variables: camelCase
+- DB columns/tables: snake_case
+- Services: `{Process}Service.php` (e.g., BudgetCalculationService)
+- Hooks: `use{Purpose}.ts` (e.g., useJobStatus)
+- Types: `interface {Component}Props`
+- Event handlers: `handle` prefix (handleClick, handleKeyDown)
+- **Always use full descriptive names** — never abbreviations (`$last_name` not `$ln`, `group => group.id` not `g => g.id`)
+
+## Environment
+
+- Windows development — use cmd over PowerShell
+- OS-agnostic file path handling in all code
+- Security appropriate for personal system — prioritize usability

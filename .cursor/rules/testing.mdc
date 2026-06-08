@@ -1,0 +1,28 @@
+---
+description: Pest PHP testing conventions and patterns
+globs: tests/**/*.php
+alwaysApply: false
+---
+
+# Testing Conventions (Pest PHP)
+
+## Structure
+
+- Feature tests for HTTP endpoints and full request cycles
+- Unit tests for isolated business logic (Services, Actions)
+- Test file names mirror the class under test (e.g., `BudgetServiceTest.php`)
+
+## Patterns
+
+- Use `RefreshDatabase` trait for all tests that touch the database
+- Use factories for test data — never hardcode database records
+- Use `assertInertia()` for verifying Inertia page responses and props
+- Group related tests with `describe()` blocks
+- Use descriptive test names: `it('calculates monthly budget remaining')`
+
+## Principles
+
+- Each test should test one behavior
+- Arrange-Act-Assert structure
+- Test both happy path and edge cases
+- Mock external services, never hit real APIs in tests

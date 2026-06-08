@@ -1,0 +1,46 @@
+---
+description: React, TypeScript, and Inertia.js frontend conventions
+globs: resources/js/**/*.tsx, resources/js/**/*.ts
+alwaysApply: false
+---
+
+# Inertia.js + React Frontend Conventions
+
+## File Organization
+
+- Pages: `resources/js/Pages/{Module}/Index.tsx` + `{Feature}Form.tsx`
+- Components: `resources/js/Components/{Domain}/{Specific}/ComponentName.tsx`
+- Form inputs: `resources/js/Components/Forms/Inputs/{ComponentName}/`
+- Hooks: `resources/js/hooks/use{Purpose}.ts` (e.g., useJobStatus, useNotificationSound)
+- Utils: `resources/js/lib/` for shared utilities
+
+## TypeScript
+
+- Strict mode enabled
+- Use `interface {Component}Props` for all component props
+- Export interfaces when reusable across components
+- Proper typing everywhere — no `any` unless absolutely unavoidable
+
+## Inertia.js Usage
+
+- Take full advantage of Inertia tools: `useForm`, `Link`, `router`
+- Use `useForm()` from `@inertiajs/react` for all form handling
+- Use `router` for programmatic navigation
+- Use `usePage()` for shared data access
+- All API calls optimized for InertiaJS
+- Use axios over Inertia only when it genuinely makes more sense (background calls, non-navigation requests, polling)
+
+## Component Patterns
+
+- Functional components only — no class components
+- Separate logic from markup as much as possible, but don't over-fragment small code into excessive files
+- Event handlers with "handle" prefix: `handleClick`, `handleKeyDown`, `handleSubmit`
+- Keep files small — extract reusable logic into hooks or utils
+- Fully responsive components
+
+## Code Quality
+
+- Error handling with try-catch blocks and proper logging
+- Use early returns for readability
+- Descriptive variable names always (never abbreviations)
+- Check for existing reusable components before creating new ones

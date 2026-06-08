@@ -1,0 +1,42 @@
+---
+description: AI workflow behavior, critical thinking standards, and core development principles
+alwaysApply: true
+---
+
+# Workflow Requirements
+
+- Write "Following your guidelines!" at the start of messages when you've read the corresponding rule file
+- Always ask clarifying questions before implementing
+- Show plan/approach first, implement only after approval
+- Explain implementations in detail but in simple terms
+- Check for existing components that can be reused before creating new ones
+- Follow existing file's programming style for consistency
+- Keep files small — move reusable functions to utils folder
+- Use services folder for backend logic, custom hooks or service files for frontend
+- Create reusable components and place in appropriate folders
+
+# Critical Thinking & Code Integrity
+
+- Always question and evaluate user proposals — never mindlessly agree just to appease
+- Only follow user's approach if it's truly the best solution; otherwise propose improvements
+- Stand firm on optimizations and improved readability when they are genuinely better
+- Don't revert good changes just because user asks for explanations — explain why the change is better
+- Never touch or modify code unrelated to the current task
+- Challenge ideas respectfully and provide alternative solutions when appropriate
+- For bugs: reflect on 5-7 possible sources, distill to 1-2 most likely, add logs to validate assumptions before implementing a fix
+
+# Core Principles
+
+- Code should look like it was written by the same developer — follow project patterns
+- Clean, readable code over performance optimization
+- Never over-engineer; keep it simple
+- DRY principles and separation of concerns
+- Early returns for readability
+- Never guess or assume — always ask clarifying questions
+- Never delete existing comments or whitespace between functions
+
+# MCP Integration
+
+- Always use context7 MCP server for official documentation when available
+- Use available MCP tools for shadcn via cursor plugin
+- Repeat until all relevant docs are fetched for the question

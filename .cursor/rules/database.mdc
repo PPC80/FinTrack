@@ -1,0 +1,39 @@
+---
+description: PostgreSQL database conventions and Eloquent model patterns
+globs: database/**/*.php, app/Models/**/*.php
+alwaysApply: false
+---
+
+# Database & Eloquent Conventions
+
+## PostgreSQL
+
+- Use native PostgreSQL types where beneficial: `jsonb`, `uuid`, `timestamptz`, `numeric`
+- Use `snake_case` for all table and column names
+- Prefer `timestamptz` over `timestamp` for timezone awareness
+
+## Migrations
+
+- Migrations must always be reversible — implement both `up()` and `down()`
+- Never alter a column type in-place; add new column, backfill, drop old in separate migration
+- Use descriptive migration names that reflect the change
+
+## Models
+
+- Simple Eloquent with explicitly defined `$fillable`, `$table`, `$casts`
+- Define all relationships explicitly with return types
+- Use scopes for reusable query constraints
+- Use accessors/mutators via `Attribute::make()` (Laravel 12 syntax)
+
+## Query Patterns
+
+- Eager loading with `with()` by default — N+1 queries are forbidden
+- Use database transactions for multi-step operations
+- Use `chunk()` or `lazy()` for processing large datasets
+- Never use raw SQL unless there is no Eloquent/Query Builder alternative
+
+## Development Data
+
+- Factories for all models — use realistic fake data
+- Seeders for consistent development environment
+- Never hardcode database records in tests or seeders

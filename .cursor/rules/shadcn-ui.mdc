@@ -1,0 +1,37 @@
+---
+description: shadcn/ui component usage, theming, and accessibility standards
+globs: resources/js/**/*.tsx
+alwaysApply: false
+---
+
+# shadcn/ui & Styling Conventions
+
+## Component Usage
+
+- Use components from `@/components/ui/`
+- Install new components with `npx shadcn@latest add [component-name]`
+- Always use the `cn()` utility from `@/lib/utils` for merging Tailwind classes
+- Configuration: `rsc: false` (Inertia SPA model, not React Server Components)
+- Lucide React for all icons
+- Compose shadcn primitives over raw HTML whenever a component exists
+
+## Theming
+
+- Dark mode as default with light mode toggle
+- One global theme file for all frontend styling (font sizes, color palette, design tokens)
+- CSS variables for theming (colors, radius, spacing)
+- Consistent use of design tokens — never hardcode colors or sizes inline
+
+## Accessibility
+
+- `tabindex` on custom interactive elements
+- `aria-label` on icon-only buttons and non-obvious controls
+- Keyboard handlers (onKeyDown) alongside click handlers on interactive elements
+- Semantic HTML elements (button for actions, a for navigation)
+- Proper focus management on modals and overlays
+
+## Responsive Design
+
+- All components must be fully responsive
+- Mobile-first approach with Tailwind breakpoints
+- Test layouts at common breakpoints (sm, md, lg, xl)

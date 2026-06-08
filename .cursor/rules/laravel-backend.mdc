@@ -1,0 +1,53 @@
+---
+description: Laravel backend conventions for controllers, services, validation, and error handling
+globs: app/**/*.php, routes/**/*.php, config/**/*.php
+alwaysApply: false
+---
+
+# Laravel Backend Conventions
+
+## Architecture
+
+- Domain-driven services: `app/Services/{Domain}/` (e.g., Finance/, Nutrition/)
+- Service naming: `{Process}Service.php` (e.g., BudgetCalculationService, MacroTrackingService)
+- One controller per module with a method for each action
+- Controllers delegate to services — minimal business logic in controllers
+- Use Action classes for single-purpose operations in `app/Actions/`
+
+## Controllers
+
+- Return `Inertia::render()` for all page responses
+- Success/error responses must be optimized for InertiaJS (redirects with flash data, not JSON)
+- Use InertiaJS over API endpoints unless there is a clear reason not to
+- RESTful routes with clear domain grouping
+
+## Validation
+
+- All input validation through FormRequest classes in `app/Http/Requests/`
+- Never use inline `$request->validate([...])`
+- Authorization logic lives in `authorize()` method of FormRequest or in Policies
+- Validation rules in array form `['required', 'string']` — never pipe-separated strings
+
+## Models
+
+- Simple Eloquent with explicitly defined `$fillable`, `$table`, and `$casts`
+- Define relationships explicitly
+- Use scopes for reusable query constraints
+- Eager loading with `with()` by default
+
+## Exception Handling
+
+- Always use specific exceptions: `ModelNotFoundException`, `InvalidArgumentException`, `ValidationException`, etc.
+- Generic `catch (\Throwable $e)` is only acceptable as a last-resort fallback after specific catches
+- Every catch block must log the error with context
+- Never silently swallow exceptions
+
+## Jobs & Queues
+
+- Use job queues for long-running tasks
+- Keep job classes focused on a single responsibility
+
+## API Resources
+
+- Use API Resources between Eloquent models and Inertia props to control data exposure
+- Never pass raw Eloquent models directly to the frontend
