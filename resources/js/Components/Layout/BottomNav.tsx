@@ -39,7 +39,7 @@ export function BottomNav() {
                 isActive={url === '/dashboard'}
             />
             <BottomNavItem
-                href="/finance"
+                href="/finance/accounts"
                 icon={Wallet}
                 label="Finance"
                 isActive={url.startsWith('/finance')}

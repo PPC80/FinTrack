@@ -63,7 +63,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                 </div>
 
                 <SidebarItem
-                    href="/finance"
+                    href="/finance/accounts"
                     icon={Wallet}
                     label="Accounts"
                     isActive={url.startsWith('/finance')}

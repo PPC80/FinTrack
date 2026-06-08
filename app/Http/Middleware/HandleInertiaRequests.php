@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,6 +34,14 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'balanceSummary' => fn () => $request->user() ? [
+                'totalBalance' => (float) Account::whereIn('type', ['bank', 'cash'])->sum('balance'),
+                'metroBalance' => (float) (Account::where('type', 'metro_card')->value('balance') ?? 0),
+            ] : null,
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }

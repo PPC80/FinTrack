@@ -1,3 +1,5 @@
+import { BalanceWidget } from '@/Components/Finance/BalanceWidget';
+
 import { ThemeToggle } from './ThemeToggle';
 import { UserMenu } from './UserMenu';
 
@@ -8,7 +10,9 @@ export function Header() {
                 <h1 className="text-lg font-bold text-primary">FinTrack</h1>
             </div>
 
-            <div className="hidden md:block" />
+            <div className="hidden md:block">
+                <BalanceWidget />
+            </div>
 
             <div className="flex items-center gap-2">
                 <ThemeToggle />
