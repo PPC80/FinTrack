@@ -42,13 +42,13 @@ export function BottomNav() {
                 href="/finance/accounts"
                 icon={Wallet}
                 label="Finance"
-                isActive={url.startsWith('/finance')}
+                isActive={url.startsWith('/finance/accounts')}
             />
             <BottomNavItem
-                href="/expenses"
+                href="/finance/expenses"
                 icon={Receipt}
                 label="Expenses"
-                isActive={url.startsWith('/expenses')}
+                isActive={url.startsWith('/finance/expenses')}
             />
             <BottomNavItem
                 href="/nutrition"

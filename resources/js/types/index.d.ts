@@ -29,6 +29,54 @@ export interface AccountTransaction {
     created_at: string;
 }
 
+export type ExpenseCategoryType = 'fixed' | 'item_based' | 'trip_based' | 'misc';
+
+export interface ExpenseCategory {
+    id: number;
+    name: string;
+    type: ExpenseCategoryType;
+    default_account_id: number | null;
+    default_account: Account | null;
+    sort_order: number;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface BasicExpenseTemplate {
+    id: number;
+    category_id: number;
+    category?: ExpenseCategory;
+    name: string;
+    default_amount: number;
+    sort_order: number;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface BasicExpense {
+    id: number;
+    category_id: number;
+    category: ExpenseCategory;
+    template_id: number | null;
+    name: string;
+    amount: number;
+    is_paid: boolean;
+    paid_at: string | null;
+    account_id: number | null;
+    account: Account | null;
+    period: string;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface ExpenseSummary {
+    total: number;
+    paid: number;
+    remaining: number;
+    count: number;
+    paid_count: number;
+}
+
 export interface BalanceSummary {
     totalBalance: number;
     metroBalance: number;
