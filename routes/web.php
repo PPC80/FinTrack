@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Finance\AccountController;
 use App\Http\Controllers\Finance\BasicExpenseController;
 use App\Http\Controllers\Finance\ExpenseCategoryController;
@@ -10,22 +11,14 @@ use App\Http\Controllers\Finance\PurchaseController;
 use App\Http\Controllers\Finance\TransportationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
-    $budgetService = app(\App\Services\Finance\BudgetCalculationService::class);
-    $period = $request->query('period', now()->format('Y-m'));
-
-    return Inertia::render('Dashboard', [
-        'budgetSummary' => $budgetService->computeForPeriod($period),
-        'currentPeriod' => $period,
-        'monthlySummaries' => $budgetService->getMonthlySummaries(),
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

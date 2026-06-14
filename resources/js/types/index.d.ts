@@ -302,6 +302,46 @@ export interface PlanningSummary {
     wishlist_purchased: number;
 }
 
+export interface DashboardAccount {
+    id: number;
+    name: string;
+    type: AccountType;
+    balance: number;
+}
+
+export interface BasicExpensesProgress {
+    total_count: number;
+    paid_count: number;
+    total_amount: number;
+    paid_amount: number;
+    percentage: number;
+}
+
+export interface DashboardShameSummary {
+    guilty_total: number;
+    guilty_count: number;
+    taxi_total: number;
+}
+
+export type RecentActivityType = 'income' | 'basic_expense' | 'purchase' | 'misc_expense' | 'trip';
+
+export interface RecentActivityItem {
+    id: string;
+    type: RecentActivityType;
+    description: string;
+    amount: number;
+    date: string;
+    account_name: string | null;
+}
+
+export interface MonthComparison {
+    current_spent: number;
+    previous_spent: number;
+    difference: number;
+    direction: 'more' | 'less';
+    previous_period: string;
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
