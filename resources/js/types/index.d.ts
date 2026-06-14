@@ -274,6 +274,34 @@ export interface BudgetSummary {
     category_budgets: CategoryBudgetStatus[];
 }
 
+export interface PredictedIncome {
+    id: number;
+    description: string;
+    amount: number;
+    expected_date: string | null;
+    is_received: boolean;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface WishlistItem {
+    id: number;
+    name: string;
+    price: number;
+    url: string | null;
+    priority: number | null;
+    is_purchased: boolean;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface PlanningSummary {
+    predicted_income_pending: number;
+    predicted_income_received: number;
+    wishlist_pending: number;
+    wishlist_purchased: number;
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {

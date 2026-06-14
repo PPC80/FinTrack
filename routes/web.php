@@ -5,6 +5,7 @@ use App\Http\Controllers\Finance\BasicExpenseController;
 use App\Http\Controllers\Finance\ExpenseCategoryController;
 use App\Http\Controllers\Finance\IncomeController;
 use App\Http\Controllers\Finance\MiscExpenseController;
+use App\Http\Controllers\Finance\PlanningController;
 use App\Http\Controllers\Finance\PurchaseController;
 use App\Http\Controllers\Finance\TransportationController;
 use App\Http\Controllers\ProfileController;
@@ -80,6 +81,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/income', [IncomeController::class, 'store'])->name('income.store');
         Route::put('/income/{incomeEntry}', [IncomeController::class, 'update'])->name('income.update');
         Route::delete('/income/{incomeEntry}', [IncomeController::class, 'destroy'])->name('income.destroy');
+
+        Route::get('/planning', [PlanningController::class, 'index'])->name('planning.index');
+
+        Route::post('/planning/predicted-income', [PlanningController::class, 'storePredictedIncome'])->name('planning.predicted-income.store');
+        Route::put('/planning/predicted-income/{predictedIncome}', [PlanningController::class, 'updatePredictedIncome'])->name('planning.predicted-income.update');
+        Route::patch('/planning/predicted-income/{predictedIncome}/toggle', [PlanningController::class, 'togglePredictedIncomeReceived'])->name('planning.predicted-income.toggle');
+        Route::delete('/planning/predicted-income/{predictedIncome}', [PlanningController::class, 'destroyPredictedIncome'])->name('planning.predicted-income.destroy');
+
+        Route::post('/planning/wishlist', [PlanningController::class, 'storeWishlistItem'])->name('planning.wishlist.store');
+        Route::put('/planning/wishlist/{wishlistItem}', [PlanningController::class, 'updateWishlistItem'])->name('planning.wishlist.update');
+        Route::patch('/planning/wishlist/{wishlistItem}/toggle', [PlanningController::class, 'toggleWishlistItemPurchased'])->name('planning.wishlist.toggle');
+        Route::delete('/planning/wishlist/{wishlistItem}', [PlanningController::class, 'destroyWishlistItem'])->name('planning.wishlist.destroy');
     });
 });
 

@@ -6,6 +6,7 @@ import {
     DollarSign,
     Flame,
     LayoutDashboard,
+    Lightbulb,
     Receipt,
     ShoppingCart,
     Utensils,
@@ -109,6 +110,13 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     icon={Bus}
                     label="Transportation"
                     isActive={url.startsWith('/finance/transportation')}
+                    isCollapsed={isCollapsed}
+                />
+                <SidebarItem
+                    href="/finance/planning"
+                    icon={Lightbulb}
+                    label="Planning"
+                    isActive={url.startsWith('/finance/planning')}
                     isCollapsed={isCollapsed}
                 />
 
