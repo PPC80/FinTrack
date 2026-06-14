@@ -18,6 +18,7 @@ class TransportModeResource extends JsonResource
             'default_account' => $this->whenLoaded('defaultAccount', fn () => new AccountResource($this->defaultAccount)),
             'sort_order' => $this->sort_order,
             'is_active' => $this->is_active,
+            'is_taxi' => $this->is_taxi,
             'trip_count' => $this->whenCounted('trips', $this->trips_count),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),

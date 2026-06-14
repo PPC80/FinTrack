@@ -20,6 +20,7 @@ class TransportMode extends Model
         'default_account_id',
         'sort_order',
         'is_active',
+        'is_taxi',
     ];
 
     protected function casts(): array
@@ -28,6 +29,7 @@ class TransportMode extends Model
             'fare' => 'decimal:2',
             'deducts_from_metro' => 'boolean',
             'is_active' => 'boolean',
+            'is_taxi' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

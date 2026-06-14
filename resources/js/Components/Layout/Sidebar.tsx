@@ -3,6 +3,7 @@ import {
     Bus,
     ChevronsLeft,
     ChevronsRight,
+    Flame,
     LayoutDashboard,
     Receipt,
     ShoppingCart,
@@ -83,6 +84,13 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     icon={ShoppingCart}
                     label="Purchases"
                     isActive={url.startsWith('/finance/purchases')}
+                    isCollapsed={isCollapsed}
+                />
+                <SidebarItem
+                    href="/finance/misc-expenses"
+                    icon={Flame}
+                    label="Misc Expenses"
+                    isActive={url.startsWith('/finance/misc-expenses')}
                     isCollapsed={isCollapsed}
                 />
                 <SidebarItem

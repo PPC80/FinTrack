@@ -152,6 +152,27 @@ export interface FlashMessages {
     warning: string | null;
 }
 
+export interface MiscExpense {
+    id: number;
+    description: string;
+    amount: number;
+    is_guilty: boolean;
+    account_id: number;
+    account: Account;
+    period: string;
+    spent_at: string;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface ShameSummary {
+    total_spent: number;
+    expense_count: number;
+    guilty_total: number;
+    guilty_count: number;
+    taxi_total: number;
+}
+
 export interface TransportMode {
     id: number;
     name: string;
@@ -161,6 +182,7 @@ export interface TransportMode {
     default_account: Account | null;
     sort_order: number;
     is_active: boolean;
+    is_taxi: boolean;
     trip_count: number;
     created_at: string | null;
     updated_at: string | null;

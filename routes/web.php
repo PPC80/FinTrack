@@ -4,6 +4,7 @@ use App\Http\Controllers\Finance\AccountController;
 use App\Http\Controllers\Finance\BasicExpenseController;
 use App\Http\Controllers\Finance\ExpenseCategoryController;
 use App\Http\Controllers\Finance\PurchaseController;
+use App\Http\Controllers\Finance\MiscExpenseController;
 use App\Http\Controllers\Finance\TransportationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/planned-items/{plannedItem}', [PurchaseController::class, 'updatePlannedItem'])->name('planned-items.update');
         Route::delete('/planned-items/{plannedItem}', [PurchaseController::class, 'destroyPlannedItem'])->name('planned-items.destroy');
         Route::post('/planned-items/{plannedItem}/purchase', [PurchaseController::class, 'purchasePlannedItem'])->name('planned-items.purchase');
+
+        Route::get('/misc-expenses', [MiscExpenseController::class, 'index'])->name('misc-expenses.index');
+        Route::post('/misc-expenses', [MiscExpenseController::class, 'store'])->name('misc-expenses.store');
+        Route::delete('/misc-expenses/{miscExpense}', [MiscExpenseController::class, 'destroy'])->name('misc-expenses.destroy');
 
         Route::get('/transportation', [TransportationController::class, 'index'])->name('transportation.index');
         Route::post('/transportation/modes', [TransportationController::class, 'storeMode'])->name('transportation.modes.store');
