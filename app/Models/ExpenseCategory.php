@@ -40,8 +40,23 @@ class ExpenseCategory extends Model
         return $this->hasMany(BasicExpense::class, 'category_id');
     }
 
+    public function catalogItems(): HasMany
+    {
+        return $this->hasMany(CatalogItem::class, 'category_id');
+    }
+
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(Purchase::class, 'category_id');
+    }
+
     public function isFixed(): bool
     {
         return $this->type === 'fixed';
+    }
+
+    public function isItemBased(): bool
+    {
+        return $this->type === 'item_based';
     }
 }

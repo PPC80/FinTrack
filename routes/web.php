@@ -3,6 +3,7 @@
 use App\Http\Controllers\Finance\AccountController;
 use App\Http\Controllers\Finance\BasicExpenseController;
 use App\Http\Controllers\Finance\ExpenseCategoryController;
+use App\Http\Controllers\Finance\PurchaseController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,6 +39,20 @@ Route::middleware('auth')->group(function () {
         Route::post('/expense-categories', [ExpenseCategoryController::class, 'store'])->name('expense-categories.store');
         Route::put('/expense-categories/{category}', [ExpenseCategoryController::class, 'update'])->name('expense-categories.update');
         Route::delete('/expense-categories/{category}', [ExpenseCategoryController::class, 'destroy'])->name('expense-categories.destroy');
+
+        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+
+        Route::post('/catalog-items', [PurchaseController::class, 'storeCatalogItem'])->name('catalog-items.store');
+        Route::put('/catalog-items/{catalogItem}', [PurchaseController::class, 'updateCatalogItem'])->name('catalog-items.update');
+        Route::delete('/catalog-items/{catalogItem}', [PurchaseController::class, 'destroyCatalogItem'])->name('catalog-items.destroy');
+
+        Route::post('/purchases/log', [PurchaseController::class, 'storePurchase'])->name('purchases.store');
+        Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroyPurchase'])->name('purchases.destroy');
+
+        Route::post('/planned-items', [PurchaseController::class, 'storePlannedItem'])->name('planned-items.store');
+        Route::put('/planned-items/{plannedItem}', [PurchaseController::class, 'updatePlannedItem'])->name('planned-items.update');
+        Route::delete('/planned-items/{plannedItem}', [PurchaseController::class, 'destroyPlannedItem'])->name('planned-items.destroy');
+        Route::post('/planned-items/{plannedItem}/purchase', [PurchaseController::class, 'purchasePlannedItem'])->name('planned-items.purchase');
     });
 });
 

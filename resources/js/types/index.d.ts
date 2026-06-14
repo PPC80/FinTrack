@@ -69,6 +69,70 @@ export interface BasicExpense {
     updated_at: string | null;
 }
 
+export interface CatalogItem {
+    id: number;
+    category_id: number;
+    category?: ExpenseCategory;
+    name: string;
+    price: number;
+    has_iva: boolean;
+    is_active: boolean;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface Purchase {
+    id: number;
+    catalog_item_id: number;
+    catalog_item: CatalogItem;
+    category_id: number;
+    category: ExpenseCategory;
+    quantity: number;
+    unit_price: number;
+    iva_amount: number;
+    total: number;
+    account_id: number;
+    account: Account;
+    period: string;
+    is_planned: boolean;
+    purchased_at: string;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface PlannedItem {
+    id: number;
+    catalog_item_id: number;
+    catalog_item: CatalogItem;
+    period: string;
+    quantity: number;
+    is_purchased: boolean;
+    purchase_id: number | null;
+    purchase?: Purchase;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface PurchaseSummary {
+    total_spent: number;
+    total_iva: number;
+    purchase_count: number;
+    planned_count: number;
+    unplanned_count: number;
+}
+
+export interface CategoryPurchaseSummary {
+    total_spent: number;
+    total_iva: number;
+    purchase_count: number;
+}
+
+export interface PlannedSummary {
+    total_items: number;
+    purchased_count: number;
+    pending_count: number;
+}
+
 export interface ExpenseSummary {
     total: number;
     paid: number;

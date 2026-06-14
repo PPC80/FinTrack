@@ -4,6 +4,7 @@ import {
     ChevronsRight,
     LayoutDashboard,
     Receipt,
+    ShoppingCart,
     Utensils,
     Wallet,
 } from 'lucide-react';
@@ -74,6 +75,13 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     icon={Receipt}
                     label="Expenses"
                     isActive={url.startsWith('/finance/expenses')}
+                    isCollapsed={isCollapsed}
+                />
+                <SidebarItem
+                    href="/finance/purchases"
+                    icon={ShoppingCart}
+                    label="Purchases"
+                    isActive={url.startsWith('/finance/purchases')}
                     isCollapsed={isCollapsed}
                 />
 
