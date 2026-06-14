@@ -31,14 +31,14 @@ describe('Predicted Income CRUD', function () {
     it('can add a predicted income entry', function () {
         $this->actingAs($this->user)
             ->post('/finance/planning/predicted-income', [
-                'description' => 'Ingreso juicio',
+                'description' => 'Ingreso freelance',
                 'amount' => 5000.00,
                 'expected_date' => '2024-06-15',
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('predicted_incomes', [
-            'description' => 'Ingreso juicio',
+            'description' => 'Ingreso freelance',
             'amount' => 5000.00,
             'is_received' => false,
         ]);

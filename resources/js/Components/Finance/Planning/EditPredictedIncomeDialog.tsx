@@ -61,7 +61,7 @@ export function EditPredictedIncomeDialog({ open, onOpenChange, predictedIncome 
                             id="edit-predicted-description"
                             value={data.description}
                             onChange={(event) => setData('description', event.target.value)}
-                            placeholder='e.g., "Ingreso juicio"'
+                            placeholder='e.g., "Ingreso freelance"'
                             aria-invalid={!!errors.description}
                         />
                         {errors.description && (

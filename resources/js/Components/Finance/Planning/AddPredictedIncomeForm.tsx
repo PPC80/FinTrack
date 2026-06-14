@@ -35,7 +35,7 @@ export function AddPredictedIncomeForm() {
                         <Input
                             ref={descriptionRef}
                             id="predicted-description"
-                            placeholder='e.g., "Ingreso juicio"'
+                            placeholder='e.g., "Ingreso freelance"'
                             value={data.description}
                             onChange={(event) => setData('description', event.target.value)}
                             disabled={processing}
