@@ -22,6 +22,7 @@ class ExpenseCategoryService
             'name' => $data['name'],
             'type' => $data['type'],
             'default_account_id' => $data['default_account_id'] ?? null,
+            'monthly_budget' => $data['monthly_budget'] ?? null,
             'sort_order' => $maxSortOrder + 1,
         ]);
     }
@@ -32,6 +33,7 @@ class ExpenseCategoryService
             'name' => $data['name'],
             'type' => $data['type'] ?? $category->type,
             'default_account_id' => $data['default_account_id'] ?? $category->default_account_id,
+            'monthly_budget' => array_key_exists('monthly_budget', $data) ? $data['monthly_budget'] : $category->monthly_budget,
         ]);
 
         return $category->fresh();

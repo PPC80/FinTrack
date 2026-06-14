@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { MonthNavigator } from '@/Components/Finance/Expenses/MonthNavigator';
+import { ConfirmPastEditDialog } from '@/Components/Finance/ConfirmPastEditDialog';
+import { PastMonthBanner } from '@/Components/Finance/PastMonthBanner';
 import { ManageModesDialog } from '@/Components/Finance/Transportation/ManageModesDialog';
 import { TransportModeCard } from '@/Components/Finance/Transportation/TransportModeCard';
 import { TransportSummaryCards } from '@/Components/Finance/Transportation/TransportSummaryCards';
@@ -11,6 +13,7 @@ import { TransportTopUpDialog } from '@/Components/Finance/Transportation/Transp
 import { TripHistory } from '@/Components/Finance/Transportation/TripHistory';
 import { AppLayout } from '@/Components/Layout/AppLayout';
 import { Button } from '@/Components/ui/button';
+import { usePastEditConfirmation } from '@/hooks/usePastEditConfirmation';
 import {
     type Account,
     type MetroTopup,
@@ -40,6 +43,13 @@ export default function TransportationIndex() {
     const modeList = modes.data;
     const tripList = trips.data;
     const accountList = accounts.data;
+
+    const {
+        isPastMonth,
+        confirmDialogOpen,
+        handleConfirm,
+        handleCancel,
+    } = usePastEditConfirmation({ currentPeriod });
 
     useEffect(() => {
         if (flash?.success) {
@@ -89,6 +99,8 @@ export default function TransportationIndex() {
                     currentPeriod={currentPeriod}
                     onPeriodChange={handlePeriodChange}
                 />
+
+                {isPastMonth && <PastMonthBanner period={currentPeriod} />}
 
                 <TransportSummaryCards summary={summary} metroBalance={metroBalance} />
 
@@ -142,6 +154,13 @@ export default function TransportationIndex() {
                 open={showTopUp}
                 onOpenChange={setShowTopUp}
                 accounts={accountList}
+            />
+
+            <ConfirmPastEditDialog
+                open={confirmDialogOpen}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+                period={currentPeriod}
             />
         </AppLayout>
     );

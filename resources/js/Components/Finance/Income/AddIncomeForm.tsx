@@ -1,6 +1,6 @@
 import { useForm } from '@inertiajs/react';
 import { Loader2, Plus } from 'lucide-react';
-import { type FormEvent, useEffect, useRef } from 'react';
+import { type FormEvent, useRef } from 'react';
 
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
@@ -12,40 +12,33 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/Components/ui/select';
-import { Switch } from '@/Components/ui/switch';
 import { type Account } from '@/types';
 
-interface QuickAddFormProps {
+interface AddIncomeFormProps {
     accounts: Account[];
     requestConfirmation?: (action: () => void) => void;
 }
 
-export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProps) {
-    const descriptionRef = useRef<HTMLInputElement>(null);
+export function AddIncomeForm({ accounts, requestConfirmation }: AddIncomeFormProps) {
+    const sourceRef = useRef<HTMLInputElement>(null);
 
     const defaultAccount = accounts.find((account) => account.is_default) ?? accounts[0];
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        description: '',
+        source: '',
         amount: '',
-        is_guilty: false,
         account_id: defaultAccount?.id?.toString() ?? '',
+        received_at: new Date().toISOString().split('T')[0],
     });
-
-    useEffect(() => {
-        if (defaultAccount) {
-            setData('account_id', defaultAccount.id.toString());
-        }
-    }, [defaultAccount?.id]);
 
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
 
         const doSubmit = () => {
-            post(route('misc-expenses.store'), {
+            post(route('income.store'), {
                 onSuccess: () => {
-                    reset('description', 'amount', 'is_guilty');
-                    descriptionRef.current?.focus();
+                    reset('source', 'amount');
+                    sourceRef.current?.focus();
                 },
                 preserveScroll: true,
             });
@@ -63,25 +56,25 @@ export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProp
             <div className="flex flex-col gap-4">
                 <div className="grid gap-4 sm:grid-cols-[1fr_120px_auto_auto_auto]">
                     <div className="flex flex-col gap-1.5">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="income-source">Source</Label>
                         <Input
-                            ref={descriptionRef}
-                            id="description"
-                            placeholder='e.g., "McDonalds", "Coffee"'
-                            value={data.description}
-                            onChange={(event) => setData('description', event.target.value)}
+                            ref={sourceRef}
+                            id="income-source"
+                            placeholder='e.g., "Salary", "Freelance"'
+                            value={data.source}
+                            onChange={(event) => setData('source', event.target.value)}
                             disabled={processing}
                             autoComplete="off"
                         />
-                        {errors.description && (
-                            <p className="text-xs text-destructive">{errors.description}</p>
+                        {errors.source && (
+                            <p className="text-xs text-destructive">{errors.source}</p>
                         )}
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                        <Label htmlFor="amount">Amount</Label>
+                        <Label htmlFor="income-amount">Amount</Label>
                         <Input
-                            id="amount"
+                            id="income-amount"
                             type="number"
                             step="0.01"
                             min="0.01"
@@ -96,13 +89,13 @@ export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProp
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                        <Label htmlFor="account">Source</Label>
+                        <Label htmlFor="income-account">Deposit To</Label>
                         <Select
                             value={data.account_id}
                             onValueChange={(value) => setData('account_id', value)}
                             disabled={processing}
                         >
-                            <SelectTrigger id="account" className="w-[140px]">
+                            <SelectTrigger id="income-account" className="w-[140px]">
                                 <SelectValue placeholder="Account" />
                             </SelectTrigger>
                             <SelectContent>
@@ -118,21 +111,25 @@ export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProp
                         )}
                     </div>
 
-                    <div className="flex flex-col items-center gap-1.5">
-                        <Label htmlFor="guilty">Guilty?</Label>
-                        <Switch
-                            id="guilty"
-                            checked={data.is_guilty}
-                            onCheckedChange={(checked) => setData('is_guilty', checked)}
+                    <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="income-date">Date</Label>
+                        <Input
+                            id="income-date"
+                            type="date"
+                            value={data.received_at}
+                            onChange={(event) => setData('received_at', event.target.value)}
                             disabled={processing}
-                            className="mt-1"
+                            className="w-[140px]"
                         />
+                        {errors.received_at && (
+                            <p className="text-xs text-destructive">{errors.received_at}</p>
+                        )}
                     </div>
 
                     <div className="flex items-end">
                         <Button
                             type="submit"
-                            disabled={processing || !data.description || !data.amount}
+                            disabled={processing || !data.source || !data.amount}
                             className="w-full sm:w-auto"
                         >
                             {processing ? (
@@ -140,7 +137,7 @@ export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProp
                             ) : (
                                 <Plus data-icon="inline-start" />
                             )}
-                            Log
+                            Add
                         </Button>
                     </div>
                 </div>

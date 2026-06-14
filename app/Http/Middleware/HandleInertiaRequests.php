@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Account;
+use App\Services\Finance\BudgetCalculationService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,6 +39,7 @@ class HandleInertiaRequests extends Middleware
             'balanceSummary' => fn () => $request->user() ? [
                 'totalBalance' => (float) Account::whereIn('type', ['bank', 'cash'])->sum('balance'),
                 'metroBalance' => (float) (Account::where('type', 'metro_card')->value('balance') ?? 0),
+                'theBigNumber' => app(BudgetCalculationService::class)->getTheBigNumber(),
             ] : null,
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

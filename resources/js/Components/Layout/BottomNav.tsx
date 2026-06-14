@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Bus, Flame, LayoutDashboard, Receipt, Settings, ShoppingCart, Utensils, Wallet } from 'lucide-react';
+import { Bus, DollarSign, Flame, LayoutDashboard, Receipt, Settings, ShoppingCart, Utensils, Wallet } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -37,6 +37,12 @@ export function BottomNav() {
                 icon={LayoutDashboard}
                 label="Home"
                 isActive={url === '/dashboard'}
+            />
+            <BottomNavItem
+                href="/finance/income"
+                icon={DollarSign}
+                label="Income"
+                isActive={url.startsWith('/finance/income')}
             />
             <BottomNavItem
                 href="/finance/accounts"

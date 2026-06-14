@@ -18,6 +18,7 @@ import { type MiscExpense } from '@/types';
 
 interface MiscExpenseListProps {
     expenses: MiscExpense[];
+    requestConfirmation?: (action: () => void) => void;
 }
 
 function formatCurrency(amount: number): string {
@@ -35,8 +36,16 @@ function formatDateTime(dateString: string): string {
     });
 }
 
-export function MiscExpenseList({ expenses }: MiscExpenseListProps) {
+export function MiscExpenseList({ expenses, requestConfirmation }: MiscExpenseListProps) {
     const [deletingExpense, setDeletingExpense] = useState<MiscExpense | null>(null);
+
+    function handleRequestDelete(expense: MiscExpense) {
+        if (requestConfirmation) {
+            requestConfirmation(() => setDeletingExpense(expense));
+        } else {
+            setDeletingExpense(expense);
+        }
+    }
 
     function handleDelete() {
         if (!deletingExpense) return;
@@ -92,7 +101,7 @@ export function MiscExpenseList({ expenses }: MiscExpenseListProps) {
                                 variant="ghost"
                                 size="icon"
                                 className="size-8 text-muted-foreground hover:text-destructive"
-                                onClick={() => setDeletingExpense(expense)}
+                                onClick={() => handleRequestDelete(expense)}
                                 aria-label={`Delete ${expense.description}`}
                             >
                                 <Trash2 className="size-4" />

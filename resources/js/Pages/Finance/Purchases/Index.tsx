@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { MonthNavigator } from '@/Components/Finance/Expenses/MonthNavigator';
+import { ConfirmPastEditDialog } from '@/Components/Finance/ConfirmPastEditDialog';
+import { PastMonthBanner } from '@/Components/Finance/PastMonthBanner';
 import { LogPurchaseDialog } from '@/Components/Finance/Purchases/LogPurchaseDialog';
 import { ManageCatalogDialog } from '@/Components/Finance/Purchases/ManageCatalogDialog';
 import { PlannedItemsList } from '@/Components/Finance/Purchases/PlannedItemsList';
@@ -12,6 +14,7 @@ import { PurchaseSummaryCards } from '@/Components/Finance/Purchases/PurchaseSum
 import { AppLayout } from '@/Components/Layout/AppLayout';
 import { Button } from '@/Components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
+import { usePastEditConfirmation } from '@/hooks/usePastEditConfirmation';
 import { formatCurrency } from '@/lib/format';
 import {
     type Account,
@@ -63,6 +66,14 @@ export default function PurchasesIndex() {
     const purchaseList = purchases.data;
     const plannedItemList = plannedItems.data;
     const accountList = accounts.data;
+
+    const {
+        isPastMonth,
+        confirmDialogOpen,
+        requestConfirmation,
+        handleConfirm,
+        handleCancel,
+    } = usePastEditConfirmation({ currentPeriod });
 
     useEffect(() => {
         if (flash?.success) {
@@ -126,6 +137,8 @@ export default function PurchasesIndex() {
                     currentPeriod={currentPeriod}
                     onPeriodChange={handlePeriodChange}
                 />
+
+                {isPastMonth && <PastMonthBanner period={currentPeriod} />}
 
                 {categoryList.length === 0 ? (
                     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-12">
@@ -230,6 +243,13 @@ export default function PurchasesIndex() {
                 categories={categoryList}
                 activeCategoryId={activeCategoryId}
                 ivaRate={ivaRate}
+            />
+
+            <ConfirmPastEditDialog
+                open={confirmDialogOpen}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+                period={currentPeriod}
             />
         </AppLayout>
     );

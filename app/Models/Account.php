@@ -30,6 +30,11 @@ class Account extends Model
         return $this->hasMany(AccountTransaction::class);
     }
 
+    public function incomeEntries(): HasMany
+    {
+        return $this->hasMany(IncomeEntry::class);
+    }
+
     public function isBank(): bool
     {
         return $this->type === 'bank';

@@ -3,8 +3,9 @@
 use App\Http\Controllers\Finance\AccountController;
 use App\Http\Controllers\Finance\BasicExpenseController;
 use App\Http\Controllers\Finance\ExpenseCategoryController;
-use App\Http\Controllers\Finance\PurchaseController;
+use App\Http\Controllers\Finance\IncomeController;
 use App\Http\Controllers\Finance\MiscExpenseController;
+use App\Http\Controllers\Finance\PurchaseController;
 use App\Http\Controllers\Finance\TransportationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -14,8 +15,15 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
+    $budgetService = app(\App\Services\Finance\BudgetCalculationService::class);
+    $period = $request->query('period', now()->format('Y-m'));
+
+    return Inertia::render('Dashboard', [
+        'budgetSummary' => $budgetService->computeForPeriod($period),
+        'currentPeriod' => $period,
+        'monthlySummaries' => $budgetService->getMonthlySummaries(),
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -67,6 +75,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/transportation/modes/{transportMode}/trip', [TransportationController::class, 'logTrip'])->name('transportation.trips.store');
         Route::delete('/transportation/trips/{trip}', [TransportationController::class, 'destroyTrip'])->name('transportation.trips.destroy');
         Route::post('/transportation/topups', [TransportationController::class, 'storeTopup'])->name('transportation.topups.store');
+
+        Route::get('/income', [IncomeController::class, 'index'])->name('income.index');
+        Route::post('/income', [IncomeController::class, 'store'])->name('income.store');
+        Route::put('/income/{incomeEntry}', [IncomeController::class, 'update'])->name('income.update');
+        Route::delete('/income/{incomeEntry}', [IncomeController::class, 'destroy'])->name('income.destroy');
     });
 });
 

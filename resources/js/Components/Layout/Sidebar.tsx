@@ -3,6 +3,7 @@ import {
     Bus,
     ChevronsLeft,
     ChevronsRight,
+    DollarSign,
     Flame,
     LayoutDashboard,
     Receipt,
@@ -14,6 +15,8 @@ import {
 import { Button } from '@/Components/ui/button';
 import { Separator } from '@/Components/ui/separator';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/format';
+import { type PageProps } from '@/types';
 
 import { SidebarItem } from './SidebarItem';
 
@@ -23,7 +26,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
-    const { url } = usePage();
+    const { url, props } = usePage<PageProps>();
+    const { balanceSummary } = props;
 
     return (
         <aside
@@ -65,6 +69,13 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     )}
                 </div>
 
+                <SidebarItem
+                    href="/finance/income"
+                    icon={DollarSign}
+                    label="Income"
+                    isActive={url.startsWith('/finance/income')}
+                    isCollapsed={isCollapsed}
+                />
                 <SidebarItem
                     href="/finance/accounts"
                     icon={Wallet}
@@ -119,6 +130,30 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     isCollapsed={isCollapsed}
                 />
             </nav>
+
+            {balanceSummary && (
+                <div className={cn(
+                    'border-t border-sidebar-border p-3',
+                    isCollapsed && 'px-2',
+                )}>
+                    {!isCollapsed ? (
+                        <div className="rounded-lg bg-primary/5 p-2.5 text-center">
+                            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                Available
+                            </p>
+                            <p className="text-sm font-bold text-primary">
+                                {formatCurrency(balanceSummary.theBigNumber)}
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="rounded-lg bg-primary/5 p-1.5 text-center" title="Available to spend">
+                            <p className="text-[9px] font-bold text-primary">
+                                ${Math.round(balanceSummary.theBigNumber)}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
 
             <div className="border-t border-sidebar-border p-2">
                 <Button

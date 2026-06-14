@@ -18,6 +18,7 @@ class UpdateExpenseCategoryRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', Rule::in(['fixed', 'item_based', 'trip_based', 'misc'])],
             'default_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
+            'monthly_budget' => ['nullable', 'numeric', 'min:0', 'max:999999999999.99'],
         ];
     }
 }

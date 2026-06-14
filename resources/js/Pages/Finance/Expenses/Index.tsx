@@ -10,8 +10,11 @@ import { EditTemplateDialog } from '@/Components/Finance/Expenses/EditTemplateDi
 import { ExpenseSummaryCards } from '@/Components/Finance/Expenses/ExpenseSummaryCards';
 import { ManageCategoriesDialog } from '@/Components/Finance/Expenses/ManageCategoriesDialog';
 import { MonthNavigator } from '@/Components/Finance/Expenses/MonthNavigator';
+import { ConfirmPastEditDialog } from '@/Components/Finance/ConfirmPastEditDialog';
+import { PastMonthBanner } from '@/Components/Finance/PastMonthBanner';
 import { AppLayout } from '@/Components/Layout/AppLayout';
 import { Button } from '@/Components/ui/button';
+import { usePastEditConfirmation } from '@/hooks/usePastEditConfirmation';
 import {
     type Account,
     type BasicExpense,
@@ -43,6 +46,14 @@ export default function ExpensesIndex() {
     const categoryList = categories.data;
     const accountList = accounts.data;
     const templateList = templates.data;
+
+    const {
+        isPastMonth,
+        confirmDialogOpen,
+        requestConfirmation,
+        handleConfirm,
+        handleCancel,
+    } = usePastEditConfirmation({ currentPeriod });
 
     useEffect(() => {
         if (flash?.success) {
@@ -104,6 +115,8 @@ export default function ExpensesIndex() {
                     onPeriodChange={handlePeriodChange}
                 />
 
+                {isPastMonth && <PastMonthBanner period={currentPeriod} />}
+
                 <ExpenseSummaryCards summary={summary} />
 
                 <div className="space-y-6">
@@ -122,6 +135,7 @@ export default function ExpensesIndex() {
                                         expense={expense}
                                         accounts={accountList}
                                         defaultAccountId={category.default_account_id}
+                                        requestConfirmation={isPastMonth ? requestConfirmation : undefined}
                                     />
                                 ))}
                             </div>
@@ -138,6 +152,7 @@ export default function ExpensesIndex() {
                                         expense={expense}
                                         accounts={accountList}
                                         defaultAccountId={null}
+                                        requestConfirmation={isPastMonth ? requestConfirmation : undefined}
                                     />
                                 ))}
                             </div>
@@ -182,6 +197,13 @@ export default function ExpensesIndex() {
                 onOpenChange={setShowCategoriesDialog}
                 categories={categoryList}
                 accounts={accountList}
+            />
+
+            <ConfirmPastEditDialog
+                open={confirmDialogOpen}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+                period={currentPeriod}
             />
         </AppLayout>
     );

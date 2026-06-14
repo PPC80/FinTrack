@@ -37,6 +37,7 @@ export interface ExpenseCategory {
     type: ExpenseCategoryType;
     default_account_id: number | null;
     default_account: Account | null;
+    monthly_budget: number | null;
     sort_order: number;
     created_at: string | null;
     updated_at: string | null;
@@ -144,6 +145,7 @@ export interface ExpenseSummary {
 export interface BalanceSummary {
     totalBalance: number;
     metroBalance: number;
+    theBigNumber: number;
 }
 
 export interface FlashMessages {
@@ -214,6 +216,62 @@ export interface TransportationSummary {
     total_cost: number;
     total_topups: number;
     mode_breakdown: Record<number, { count: number; cost: number }>;
+}
+
+export interface IncomeEntry {
+    id: number;
+    source: string;
+    amount: number;
+    account_id: number;
+    account: Account | null;
+    period: string;
+    received_at: string;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface ObligationsBreakdown {
+    unpaid_basic_expenses: number;
+    remaining_category_budgets: number;
+    unpaid_planned_items: number;
+}
+
+export interface SpendingBreakdown {
+    basic_expenses: number;
+    purchases: number;
+    misc_expenses: number;
+    transportation: number;
+}
+
+export interface CategoryBudgetStatus {
+    id: number;
+    name: string;
+    budget: number;
+    spent: number;
+    remaining: number;
+    percentage_used: number;
+}
+
+export interface MonthlySummaryData {
+    period: string;
+    total_income: number;
+    total_spent: number;
+    leftover: number;
+    carry_over_from_previous: number;
+}
+
+export interface BudgetSummary {
+    total_income: number;
+    carry_over: number;
+    effective_income: number;
+    total_obligations: number;
+    total_spent: number;
+    account_balances: number;
+    the_big_number: number;
+    monthly_leftover: number;
+    obligations_breakdown: ObligationsBreakdown;
+    spending_breakdown: SpendingBreakdown;
+    category_budgets: CategoryBudgetStatus[];
 }
 
 export type PageProps<

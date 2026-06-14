@@ -15,6 +15,7 @@ class ExpenseCategoryResource extends JsonResource
             'type' => $this->type,
             'default_account_id' => $this->default_account_id,
             'default_account' => $this->whenLoaded('defaultAccount', fn () => new AccountResource($this->defaultAccount)),
+            'monthly_budget' => $this->monthly_budget ? (float) $this->monthly_budget : null,
             'sort_order' => $this->sort_order,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),

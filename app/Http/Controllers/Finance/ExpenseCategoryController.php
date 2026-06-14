@@ -19,7 +19,9 @@ class ExpenseCategoryController extends Controller
     {
         $this->categoryService->create($request->validated());
 
-        return redirect()->route('expenses.index')
+        $period = $request->query('period');
+
+        return redirect()->route('expenses.index', $period ? ['period' => $period] : [])
             ->with('success', 'Category created successfully.');
     }
 
@@ -27,7 +29,9 @@ class ExpenseCategoryController extends Controller
     {
         $this->categoryService->update($category, $request->validated());
 
-        return redirect()->route('expenses.index')
+        $period = $request->query('period');
+
+        return redirect()->route('expenses.index', $period ? ['period' => $period] : [])
             ->with('success', 'Category updated successfully.');
     }
 
@@ -35,7 +39,9 @@ class ExpenseCategoryController extends Controller
     {
         $this->categoryService->delete($category);
 
-        return redirect()->route('expenses.index')
+        $period = request()->query('period');
+
+        return redirect()->route('expenses.index', $period ? ['period' => $period] : [])
             ->with('success', 'Category deleted successfully.');
     }
 }

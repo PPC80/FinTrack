@@ -14,9 +14,10 @@ interface BasicExpenseItemProps {
     expense: BasicExpense;
     accounts: Account[];
     defaultAccountId: number | null;
+    requestConfirmation?: (action: () => void) => void;
 }
 
-export function BasicExpenseItem({ expense, accounts, defaultAccountId }: BasicExpenseItemProps) {
+export function BasicExpenseItem({ expense, accounts, defaultAccountId, requestConfirmation }: BasicExpenseItemProps) {
     const [isEditingAmount, setIsEditingAmount] = useState(false);
     const [selectedAccountId, setSelectedAccountId] = useState<string>(
         String(expense.account_id ?? defaultAccountId ?? ''),
@@ -39,21 +40,37 @@ export function BasicExpenseItem({ expense, accounts, defaultAccountId }: BasicE
             return;
         }
 
-        toggleForm.transform(() => ({
-            is_paid: willBePaid,
-            account_id: accountId,
-        }));
+        const doToggle = () => {
+            toggleForm.transform(() => ({
+                is_paid: willBePaid,
+                account_id: accountId,
+            }));
 
-        toggleForm.patch(route('expenses.toggle-paid', expense.id), {
-            preserveScroll: true,
-        });
+            toggleForm.patch(route('expenses.toggle-paid', expense.id), {
+                preserveScroll: true,
+            });
+        };
+
+        if (requestConfirmation) {
+            requestConfirmation(doToggle);
+        } else {
+            doToggle();
+        }
     }
 
     function handleSaveAmount() {
-        amountForm.patch(route('expenses.update-amount', expense.id), {
-            preserveScroll: true,
-            onSuccess: () => setIsEditingAmount(false),
-        });
+        const doSave = () => {
+            amountForm.patch(route('expenses.update-amount', expense.id), {
+                preserveScroll: true,
+                onSuccess: () => setIsEditingAmount(false),
+            });
+        };
+
+        if (requestConfirmation) {
+            requestConfirmation(doSave);
+        } else {
+            doSave();
+        }
     }
 
     function handleCancelEditAmount() {
