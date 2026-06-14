@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Finance\AccountController;
+use App\Http\Controllers\Finance\AccountTransferController;
 use App\Http\Controllers\Finance\BasicExpenseController;
+use App\Http\Controllers\Finance\CategoryBudgetController;
 use App\Http\Controllers\Finance\ExpenseCategoryController;
 use App\Http\Controllers\Finance\IncomeController;
 use App\Http\Controllers\Finance\MiscExpenseController;
@@ -60,7 +62,14 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/misc-expenses', [MiscExpenseController::class, 'index'])->name('misc-expenses.index');
         Route::post('/misc-expenses', [MiscExpenseController::class, 'store'])->name('misc-expenses.store');
+        Route::put('/misc-expenses/{miscExpense}', [MiscExpenseController::class, 'update'])->name('misc-expenses.update');
         Route::delete('/misc-expenses/{miscExpense}', [MiscExpenseController::class, 'destroy'])->name('misc-expenses.destroy');
+
+        Route::get('/transfers', [AccountTransferController::class, 'index'])->name('transfers.index');
+        Route::post('/transfers', [AccountTransferController::class, 'store'])->name('transfers.store');
+        Route::delete('/transfers/{accountTransfer}', [AccountTransferController::class, 'destroy'])->name('transfers.destroy');
+
+        Route::post('/category-budgets', [CategoryBudgetController::class, 'store'])->name('category-budgets.store');
 
         Route::get('/transportation', [TransportationController::class, 'index'])->name('transportation.index');
         Route::post('/transportation/modes', [TransportationController::class, 'storeMode'])->name('transportation.modes.store');

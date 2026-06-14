@@ -31,10 +31,14 @@ class PurchaseService
         $account = Account::findOrFail($data['account_id']);
         $quantity = $data['quantity'] ?? 1;
         $period = $data['period'] ?? now()->format('Y-m');
+        $isBankTransfer = $data['is_bank_transfer'] ?? false;
+        $isInternational = $data['is_international'] ?? false;
 
         $calculation = $catalogItem->calculateTotal($quantity);
+        $commission = $this->calculateCommission($account, (float) $calculation['total'], $isBankTransfer, $isInternational);
+        $totalDeducted = $calculation['total'] + $commission;
 
-        return DB::transaction(function () use ($catalogItem, $account, $quantity, $period, $calculation, $data) {
+        return DB::transaction(function () use ($catalogItem, $account, $quantity, $period, $calculation, $data, $isBankTransfer, $isInternational, $commission, $totalDeducted) {
             $purchase = Purchase::create([
                 'catalog_item_id' => $catalogItem->id,
                 'category_id' => $catalogItem->category_id,
@@ -45,24 +49,46 @@ class PurchaseService
                 'account_id' => $account->id,
                 'period' => $period,
                 'is_planned' => $data['is_planned'] ?? false,
+                'is_bank_transfer' => $isBankTransfer,
+                'is_international' => $isInternational,
+                'commission_amount' => $commission,
                 'purchased_at' => now(),
             ]);
 
+            $commissionNote = $commission > 0 ? " (fee: \${$commission})" : '';
             AccountTransaction::create([
                 'account_id' => $account->id,
-                'amount' => -abs($calculation['total']),
-                'description' => "Purchase: {$catalogItem->name} x{$quantity}",
+                'amount' => -abs($totalDeducted),
+                'description' => "Purchase: {$catalogItem->name} x{$quantity}{$commissionNote}",
                 'type' => 'expense',
                 'period' => $period,
             ]);
 
-            $account->decrement('balance', abs($calculation['total']));
+            $account->decrement('balance', abs($totalDeducted));
 
             return $purchase->fresh()->load(['catalogItem', 'category', 'account']);
         });
     }
 
-    public function logPurchaseFromPlannedItem(PlannedItem $plannedItem, int $accountId): Purchase
+    private function calculateCommission(Account $account, float $amount, bool $isBankTransfer, bool $isInternational): float
+    {
+        $commission = 0.0;
+
+        if ($isBankTransfer) {
+            $commission += (float) ($account->cross_bank_transfer_fee ?? 0);
+        }
+
+        if ($isInternational) {
+            $ivaRate = (float) ($account->international_iva_rate ?? 0);
+            $isdRate = (float) ($account->isd_rate ?? 0);
+            $commission += $amount * ($ivaRate / 100);
+            $commission += $amount * ($isdRate / 100);
+        }
+
+        return round($commission, 2);
+    }
+
+    public function logPurchaseFromPlannedItem(PlannedItem $plannedItem, int $accountId, bool $isBankTransfer = false, bool $isInternational = false): Purchase
     {
         if ($plannedItem->is_purchased) {
             throw new \InvalidArgumentException('This planned item has already been purchased.');
@@ -74,6 +100,8 @@ class PurchaseService
             'quantity' => $plannedItem->quantity,
             'period' => $plannedItem->period,
             'is_planned' => true,
+            'is_bank_transfer' => $isBankTransfer,
+            'is_international' => $isInternational,
         ]);
 
         $plannedItem->update([
@@ -88,16 +116,17 @@ class PurchaseService
     {
         DB::transaction(function () use ($purchase) {
             $account = Account::findOrFail($purchase->account_id);
+            $totalRestored = (float) $purchase->total + (float) $purchase->commission_amount;
 
             AccountTransaction::create([
                 'account_id' => $account->id,
-                'amount' => abs((float) $purchase->total),
+                'amount' => abs($totalRestored),
                 'description' => "Reverted purchase: {$purchase->catalogItem->name}",
-                'type' => 'expense',
+                'type' => 'adjustment',
                 'period' => $purchase->period,
             ]);
 
-            $account->increment('balance', abs((float) $purchase->total));
+            $account->increment('balance', abs($totalRestored));
 
             $plannedItem = PlannedItem::where('purchase_id', $purchase->id)->first();
             if ($plannedItem) {

@@ -15,6 +15,7 @@ class BasicExpenseTemplateResource extends JsonResource
             'category' => $this->whenLoaded('category', fn () => new ExpenseCategoryResource($this->category)),
             'name' => $this->name,
             'default_amount' => (float) $this->default_amount,
+            'due_day_of_month' => $this->due_day_of_month,
             'sort_order' => $this->sort_order,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),

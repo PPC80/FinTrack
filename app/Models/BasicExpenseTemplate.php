@@ -15,6 +15,7 @@ class BasicExpenseTemplate extends Model
         'category_id',
         'name',
         'default_amount',
+        'due_day_of_month',
         'sort_order',
     ];
 
@@ -22,6 +23,7 @@ class BasicExpenseTemplate extends Model
     {
         return [
             'default_amount' => 'decimal:2',
+            'due_day_of_month' => 'integer',
             'sort_order' => 'integer',
         ];
     }

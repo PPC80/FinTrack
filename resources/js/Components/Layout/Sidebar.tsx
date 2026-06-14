@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import {
+    ArrowLeftRight,
     Bus,
     ChevronsLeft,
     ChevronsRight,
@@ -43,11 +44,18 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     isCollapsed && 'justify-center px-2',
                 )}
             >
-                {!isCollapsed && (
-                    <h1 className="text-lg font-bold text-primary">FinTrack</h1>
-                )}
-                {isCollapsed && (
-                    <span className="text-lg font-bold text-primary">F</span>
+                {!isCollapsed ? (
+                    <img
+                        src="/images/FinTrack_logo.png"
+                        alt="FinTrack"
+                        className="h-7 w-auto"
+                    />
+                ) : (
+                    <img
+                        src="/images/FinTrack_logo.png"
+                        alt="FinTrack"
+                        className="h-5 w-auto max-w-10 object-contain object-left"
+                    />
                 )}
             </div>
 
@@ -82,6 +90,13 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     icon={Wallet}
                     label="Accounts"
                     isActive={url.startsWith('/finance/accounts')}
+                    isCollapsed={isCollapsed}
+                />
+                <SidebarItem
+                    href="/finance/transfers"
+                    icon={ArrowLeftRight}
+                    label="Transfers"
+                    isActive={url.startsWith('/finance/transfers')}
                     isCollapsed={isCollapsed}
                 />
                 <SidebarItem

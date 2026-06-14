@@ -15,6 +15,8 @@ class PurchasePlannedItemRequest extends FormRequest
     {
         return [
             'account_id' => ['required', 'integer', 'exists:accounts,id'],
+            'is_bank_transfer' => ['boolean'],
+            'is_international' => ['boolean'],
         ];
     }
 }

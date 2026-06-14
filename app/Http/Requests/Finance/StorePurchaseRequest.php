@@ -17,6 +17,8 @@ class StorePurchaseRequest extends FormRequest
             'catalog_item_id' => ['required', 'integer', 'exists:catalog_items,id'],
             'quantity' => ['required', 'integer', 'min:1'],
             'account_id' => ['required', 'integer', 'exists:accounts,id'],
+            'is_bank_transfer' => ['boolean'],
+            'is_international' => ['boolean'],
         ];
     }
 }

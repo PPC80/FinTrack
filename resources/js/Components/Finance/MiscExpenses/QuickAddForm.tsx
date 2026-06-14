@@ -29,6 +29,9 @@ export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProp
         description: '',
         amount: '',
         is_guilty: false,
+        is_taxi: false,
+        is_bank_transfer: false,
+        is_international: false,
         account_id: defaultAccount?.id?.toString() ?? '',
     });
 
@@ -44,7 +47,7 @@ export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProp
         const doSubmit = () => {
             post(route('misc-expenses.store'), {
                 onSuccess: () => {
-                    reset('description', 'amount', 'is_guilty');
+                    reset('description', 'amount', 'is_guilty', 'is_taxi', 'is_bank_transfer', 'is_international');
                     descriptionRef.current?.focus();
                 },
                 preserveScroll: true,
@@ -142,6 +145,42 @@ export function QuickAddForm({ accounts, requestConfirmation }: QuickAddFormProp
                             )}
                             Log
                         </Button>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 border-t border-border pt-3">
+                    <div className="flex items-center gap-2">
+                        <input
+                            id="is_taxi"
+                            type="checkbox"
+                            checked={data.is_taxi}
+                            onChange={(event) => setData('is_taxi', event.target.checked)}
+                            disabled={processing}
+                            className="size-4 rounded border-border"
+                        />
+                        <Label htmlFor="is_taxi" className="text-xs font-normal">Taxi</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <input
+                            id="is_bank_transfer"
+                            type="checkbox"
+                            checked={data.is_bank_transfer}
+                            onChange={(event) => setData('is_bank_transfer', event.target.checked)}
+                            disabled={processing}
+                            className="size-4 rounded border-border"
+                        />
+                        <Label htmlFor="is_bank_transfer" className="text-xs font-normal">Bank Transfer</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <input
+                            id="is_international"
+                            type="checkbox"
+                            checked={data.is_international}
+                            onChange={(event) => setData('is_international', event.target.checked)}
+                            disabled={processing}
+                            className="size-4 rounded border-border"
+                        />
+                        <Label htmlFor="is_international" className="text-xs font-normal">International</Label>
                     </div>
                 </div>
             </div>

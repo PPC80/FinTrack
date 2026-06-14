@@ -1,4 +1,4 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Package, Plus, ShoppingCart } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -11,6 +11,7 @@ import { ManageCatalogDialog } from '@/Components/Finance/Purchases/ManageCatalo
 import { PlannedItemsList } from '@/Components/Finance/Purchases/PlannedItemsList';
 import { PurchaseItem } from '@/Components/Finance/Purchases/PurchaseItem';
 import { PurchaseSummaryCards } from '@/Components/Finance/Purchases/PurchaseSummaryCards';
+import { CategoryBudgetEditor } from '@/Components/Finance/Purchases/CategoryBudgetEditor';
 import { AppLayout } from '@/Components/Layout/AppLayout';
 import { Button } from '@/Components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
@@ -40,6 +41,7 @@ interface PurchasesPageProps extends PageProps {
     currentPeriod: string;
     activeCategoryId: number | null;
     ivaRate: number;
+    categoryBudgets: Record<number, number>;
 }
 
 export default function PurchasesIndex() {
@@ -55,6 +57,7 @@ export default function PurchasesIndex() {
         currentPeriod,
         activeCategoryId,
         ivaRate,
+        categoryBudgets,
         flash,
     } = usePage<PurchasesPageProps>().props;
 
@@ -172,6 +175,14 @@ export default function PurchasesIndex() {
                             <TabsContent key={category.id} value={String(category.id)}>
                                 <div className="flex flex-col gap-6">
                                     <PurchaseSummaryCards summary={summary} />
+
+                                    <CategoryBudgetEditor
+                                        categoryId={category.id}
+                                        categoryName={category.name}
+                                        currentBudget={categoryBudgets[category.id] ?? 0}
+                                        spent={categorySummaries[category.id]?.total_spent ?? 0}
+                                        period={currentPeriod}
+                                    />
 
                                     <PlannedItemsList
                                         plannedItems={plannedItemList}

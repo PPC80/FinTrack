@@ -14,6 +14,10 @@ class MiscExpense extends Model
         'description',
         'amount',
         'is_guilty',
+        'is_taxi',
+        'is_bank_transfer',
+        'is_international',
+        'commission_amount',
         'account_id',
         'period',
         'spent_at',
@@ -23,7 +27,11 @@ class MiscExpense extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'commission_amount' => 'decimal:2',
             'is_guilty' => 'boolean',
+            'is_taxi' => 'boolean',
+            'is_bank_transfer' => 'boolean',
+            'is_international' => 'boolean',
             'spent_at' => 'datetime',
         ];
     }

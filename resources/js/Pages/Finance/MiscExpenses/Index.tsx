@@ -1,11 +1,12 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import { Flame } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { MonthNavigator } from '@/Components/Finance/Expenses/MonthNavigator';
 import { ConfirmPastEditDialog } from '@/Components/Finance/ConfirmPastEditDialog';
 import { PastMonthBanner } from '@/Components/Finance/PastMonthBanner';
+import { EditMiscExpenseDialog } from '@/Components/Finance/MiscExpenses/EditMiscExpenseDialog';
 import { MiscExpenseList } from '@/Components/Finance/MiscExpenses/MiscExpenseList';
 import { QuickAddForm } from '@/Components/Finance/MiscExpenses/QuickAddForm';
 import { ShameCounter } from '@/Components/Finance/MiscExpenses/ShameCounter';
@@ -31,6 +32,7 @@ export default function MiscExpensesIndex() {
 
     const expenseList = expenses.data;
     const accountList = accounts.data;
+    const [editingExpense, setEditingExpense] = useState<MiscExpense | null>(null);
 
     const {
         isPastMonth,
@@ -101,10 +103,19 @@ export default function MiscExpensesIndex() {
                     </div>
                     <MiscExpenseList
                         expenses={expenseList}
+                        accounts={accountList}
+                        onEdit={setEditingExpense}
                         requestConfirmation={isPastMonth ? requestConfirmation : undefined}
                     />
                 </div>
             </div>
+
+            <EditMiscExpenseDialog
+                expense={editingExpense}
+                accounts={accountList}
+                open={!!editingExpense}
+                onOpenChange={(open) => { if (!open) setEditingExpense(null); }}
+            />
 
             <ConfirmPastEditDialog
                 open={confirmDialogOpen}

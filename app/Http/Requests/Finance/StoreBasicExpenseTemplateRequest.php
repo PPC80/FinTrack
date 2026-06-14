@@ -17,6 +17,7 @@ class StoreBasicExpenseTemplateRequest extends FormRequest
             'category_id' => ['required', 'integer', 'exists:expense_categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'default_amount' => ['required', 'numeric', 'min:0.01', 'max:999999999999.99'],
+            'due_day_of_month' => ['nullable', 'integer', 'min:1', 'max:31'],
         ];
     }
 }

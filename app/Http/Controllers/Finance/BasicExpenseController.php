@@ -87,6 +87,7 @@ class BasicExpenseController extends Controller
             $this->expenseService->markAsPaid(
                 $expense,
                 (int) $request->validated('account_id'),
+                $request->validated('payment_method'),
             );
         } else {
             $this->expenseService->markAsUnpaid($expense);

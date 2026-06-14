@@ -4,6 +4,7 @@ namespace App\Services\Finance;
 
 use App\Models\Account;
 use App\Models\BasicExpense;
+use App\Models\CategoryPeriodBudget;
 use App\Models\ExpenseCategory;
 use App\Models\IncomeEntry;
 use App\Models\MiscExpense;
@@ -175,17 +176,25 @@ class BudgetCalculationService
 
     public function getCategoryBudgetStatus(string $period): array
     {
-        $categories = ExpenseCategory::where('type', 'item_based')
-            ->whereNotNull('monthly_budget')
-            ->where('monthly_budget', '>', 0)
-            ->get();
+        $periodBudgets = CategoryPeriodBudget::where('period', $period)
+            ->where('amount', '>', 0)
+            ->get()
+            ->keyBy('category_id');
 
-        return $categories->map(function (ExpenseCategory $category) use ($period) {
+        $categories = ExpenseCategory::where('type', 'item_based')->get();
+
+        return $categories->map(function (ExpenseCategory $category) use ($period, $periodBudgets) {
+            $periodBudget = $periodBudgets->get($category->id);
+            $budget = $periodBudget ? (float) $periodBudget->amount : (float) ($category->monthly_budget ?? 0);
+
+            if ($budget <= 0) {
+                return null;
+            }
+
             $spent = (float) Purchase::where('period', $period)
                 ->where('category_id', $category->id)
                 ->sum('total');
 
-            $budget = (float) $category->monthly_budget;
             $remaining = (float) max(0, $budget - $spent);
 
             return [
@@ -196,7 +205,7 @@ class BudgetCalculationService
                 'remaining' => $remaining,
                 'percentage_used' => $budget > 0 ? min(100.0, round(($spent / $budget) * 100, 1)) : 0.0,
             ];
-        })->values()->toArray();
+        })->filter()->values()->toArray();
     }
 
     private function getUnpaidBasicExpenses(string $period): float
@@ -208,19 +217,28 @@ class BudgetCalculationService
 
     private function getRemainingCategoryBudgets(string $period): float
     {
-        $categories = ExpenseCategory::where('type', 'item_based')
-            ->whereNotNull('monthly_budget')
-            ->where('monthly_budget', '>', 0)
-            ->get();
+        $periodBudgets = CategoryPeriodBudget::where('period', $period)
+            ->where('amount', '>', 0)
+            ->get()
+            ->keyBy('category_id');
+
+        $categories = ExpenseCategory::where('type', 'item_based')->get();
 
         $totalRemaining = 0.0;
 
         foreach ($categories as $category) {
+            $periodBudget = $periodBudgets->get($category->id);
+            $budget = $periodBudget ? (float) $periodBudget->amount : (float) ($category->monthly_budget ?? 0);
+
+            if ($budget <= 0) {
+                continue;
+            }
+
             $spent = (float) Purchase::where('period', $period)
                 ->where('category_id', $category->id)
                 ->sum('total');
 
-            $remaining = max(0, (float) $category->monthly_budget - $spent);
+            $remaining = max(0, $budget - $spent);
             $totalRemaining += $remaining;
         }
 

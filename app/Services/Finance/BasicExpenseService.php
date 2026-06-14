@@ -13,7 +13,7 @@ class BasicExpenseService
 {
     public function getExpensesForPeriod(string $period): Collection
     {
-        return BasicExpense::with(['category', 'account'])
+        return BasicExpense::with(['category', 'account', 'template'])
             ->where('period', $period)
             ->orderBy('category_id')
             ->orderBy('id')
@@ -39,6 +39,7 @@ class BasicExpenseService
             'category_id' => $data['category_id'],
             'name' => $data['name'],
             'default_amount' => $data['default_amount'],
+            'due_day_of_month' => $data['due_day_of_month'] ?? null,
             'sort_order' => $maxSortOrder + 1,
         ]);
     }
@@ -66,6 +67,7 @@ class BasicExpenseService
         $template->update([
             'name' => $data['name'],
             'default_amount' => $data['default_amount'],
+            'due_day_of_month' => $data['due_day_of_month'] ?? null,
         ]);
 
         return $template->fresh();
@@ -87,30 +89,39 @@ class BasicExpenseService
         return $expense->fresh();
     }
 
-    public function markAsPaid(BasicExpense $expense, int $accountId): BasicExpense
+    public function markAsPaid(BasicExpense $expense, int $accountId, ?string $paymentMethod = null): BasicExpense
     {
         if ($expense->is_paid) {
             return $expense;
         }
 
         $account = Account::findOrFail($accountId);
+        $amount = abs((float) $expense->amount);
+        $commission = $this->calculateCommission($account, $amount, $paymentMethod);
+        $totalDeducted = $amount + $commission;
 
-        return DB::transaction(function () use ($expense, $account) {
+        return DB::transaction(function () use ($expense, $account, $paymentMethod, $commission, $totalDeducted) {
             $expense->update([
                 'is_paid' => true,
                 'paid_at' => now(),
                 'account_id' => $account->id,
+                'payment_method' => $paymentMethod,
+                'commission_amount' => $commission,
             ]);
+
+            $commissionNote = $commission > 0
+                ? ' (' . $this->getPaymentMethodLabel($paymentMethod) . " fee: \${$commission})"
+                : '';
 
             AccountTransaction::create([
                 'account_id' => $account->id,
-                'amount' => -abs((float) $expense->amount),
-                'description' => "Paid: {$expense->name}",
+                'amount' => -abs($totalDeducted),
+                'description' => "Paid: {$expense->name}{$commissionNote}",
                 'type' => 'expense',
                 'period' => $expense->period,
             ]);
 
-            $account->decrement('balance', abs((float) $expense->amount));
+            $account->decrement('balance', abs($totalDeducted));
 
             return $expense->fresh()->load(['category', 'account']);
         });
@@ -123,26 +134,54 @@ class BasicExpenseService
         }
 
         $account = Account::findOrFail($expense->account_id);
+        $commission = (float) ($expense->commission_amount ?? 0);
+        $totalRestored = abs((float) $expense->amount) + $commission;
 
-        return DB::transaction(function () use ($expense, $account) {
+        return DB::transaction(function () use ($expense, $account, $totalRestored) {
             AccountTransaction::create([
                 'account_id' => $account->id,
-                'amount' => abs((float) $expense->amount),
+                'amount' => abs($totalRestored),
                 'description' => "Reverted: {$expense->name}",
-                'type' => 'expense',
+                'type' => 'adjustment',
                 'period' => $expense->period,
             ]);
 
-            $account->increment('balance', abs((float) $expense->amount));
+            $account->increment('balance', abs($totalRestored));
 
             $expense->update([
                 'is_paid' => false,
                 'paid_at' => null,
                 'account_id' => null,
+                'payment_method' => null,
+                'commission_amount' => 0,
             ]);
 
             return $expense->fresh()->load(['category', 'account']);
         });
+    }
+
+    private function calculateCommission(Account $account, float $amount, ?string $paymentMethod): float
+    {
+        return match ($paymentMethod) {
+            'service_payment' => (float) ($account->service_payment_fee ?? 0),
+            'bank_transfer' => (float) ($account->cross_bank_transfer_fee ?? 0),
+            'international' => round(
+                $amount * ((float) ($account->international_iva_rate ?? 0) / 100)
+                + $amount * ((float) ($account->isd_rate ?? 0) / 100),
+                2
+            ),
+            default => 0.0,
+        };
+    }
+
+    private function getPaymentMethodLabel(?string $paymentMethod): string
+    {
+        return match ($paymentMethod) {
+            'service_payment' => 'service',
+            'bank_transfer' => 'transfer',
+            'international' => 'international',
+            default => '',
+        };
     }
 
     public function getSummary(string $period): array

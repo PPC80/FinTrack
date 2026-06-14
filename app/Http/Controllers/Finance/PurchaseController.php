@@ -16,6 +16,7 @@ use App\Http\Resources\PlannedItemResource;
 use App\Http\Resources\PurchaseResource;
 use App\Models\Account;
 use App\Models\CatalogItem;
+use App\Models\CategoryPeriodBudget;
 use App\Models\ExpenseCategory;
 use App\Models\PlannedItem;
 use App\Models\Purchase;
@@ -61,6 +62,15 @@ class PurchaseController extends Controller
         $plannedSummary = $this->plannedItemService->getPlannedSummary($period, $activeCategoryId);
         $accounts = Account::whereIn('type', ['bank', 'cash'])->orderBy('name')->get();
 
+        $this->ensureBudgetsCopied($period, $categoryIds);
+
+        $categoryBudgets = CategoryPeriodBudget::where('period', $period)
+            ->whereIn('category_id', $categoryIds)
+            ->get()
+            ->keyBy('category_id')
+            ->map(fn ($budget) => (float) $budget->amount)
+            ->toArray();
+
         return Inertia::render('Finance/Purchases/Index', [
             'categories' => ExpenseCategoryResource::collection($itemBasedCategories),
             'catalogItems' => CatalogItemResource::collection($catalogItems),
@@ -73,6 +83,7 @@ class PurchaseController extends Controller
             'currentPeriod' => $period,
             'activeCategoryId' => $activeCategoryId,
             'ivaRate' => (float) config('fintrack.iva_rate'),
+            'categoryBudgets' => $categoryBudgets,
         ]);
     }
 
@@ -171,6 +182,8 @@ class PurchaseController extends Controller
             $this->purchaseService->logPurchaseFromPlannedItem(
                 $plannedItem,
                 (int) $request->validated('account_id'),
+                (bool) $request->validated('is_bank_transfer', false),
+                (bool) $request->validated('is_international', false),
             );
         } catch (\InvalidArgumentException $exception) {
             return redirect()->back()
@@ -179,5 +192,44 @@ class PurchaseController extends Controller
 
         return redirect()->back()
             ->with('success', 'Planned item marked as bought.');
+    }
+
+    private function ensureBudgetsCopied(string $period, array $categoryIds): void
+    {
+        $existingBudgets = CategoryPeriodBudget::where('period', $period)
+            ->whereIn('category_id', $categoryIds)
+            ->pluck('category_id')
+            ->toArray();
+
+        $missingCategoryIds = array_diff($categoryIds, $existingBudgets);
+
+        if (empty($missingCategoryIds)) {
+            return;
+        }
+
+        $previousPeriod = $this->getPreviousPeriod($period);
+        $previousBudgets = CategoryPeriodBudget::where('period', $previousPeriod)
+            ->whereIn('category_id', $missingCategoryIds)
+            ->get();
+
+        foreach ($previousBudgets as $budget) {
+            CategoryPeriodBudget::create([
+                'category_id' => $budget->category_id,
+                'period' => $period,
+                'amount' => $budget->amount,
+            ]);
+        }
+    }
+
+    private function getPreviousPeriod(string $period): string
+    {
+        $year = (int) substr($period, 0, 4);
+        $month = (int) substr($period, 5, 2);
+
+        if ($month === 1) {
+            return ($year - 1).'-12';
+        }
+
+        return $year.'-'.str_pad($month - 1, 2, '0', STR_PAD_LEFT);
     }
 }

@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class AccountService
 {
-    public function createAccount(string $name, float $initialBalance = 0, bool $isDefault = false): Account
+    public function createAccount(string $name, float $initialBalance = 0, bool $isDefault = false, array $commissions = []): Account
     {
-        return DB::transaction(function () use ($name, $initialBalance, $isDefault) {
+        return DB::transaction(function () use ($name, $initialBalance, $isDefault, $commissions) {
             if ($isDefault) {
                 Account::where('is_default', true)->update(['is_default' => false]);
             }
@@ -20,6 +20,12 @@ class AccountService
                 'type' => 'bank',
                 'balance' => $initialBalance,
                 'is_default' => $isDefault,
+                'service_payment_fee' => $commissions['service_payment_fee'] ?? null,
+                'cross_bank_transfer_fee' => $commissions['cross_bank_transfer_fee'] ?? null,
+                'withdrawal_atm_fee' => $commissions['withdrawal_atm_fee'] ?? null,
+                'withdrawal_store_fee' => $commissions['withdrawal_store_fee'] ?? null,
+                'international_iva_rate' => $commissions['international_iva_rate'] ?? null,
+                'isd_rate' => $commissions['isd_rate'] ?? null,
             ]);
 
             if ($initialBalance != 0) {
@@ -36,9 +42,9 @@ class AccountService
         });
     }
 
-    public function updateAccount(Account $account, string $name, bool $isDefault = false): Account
+    public function updateAccount(Account $account, string $name, bool $isDefault = false, array $commissions = []): Account
     {
-        return DB::transaction(function () use ($account, $name, $isDefault) {
+        return DB::transaction(function () use ($account, $name, $isDefault, $commissions) {
             if ($isDefault && ! $account->is_default) {
                 Account::where('is_default', true)->update(['is_default' => false]);
             }
@@ -46,6 +52,12 @@ class AccountService
             $account->update([
                 'name' => $name,
                 'is_default' => $isDefault,
+                'service_payment_fee' => $commissions['service_payment_fee'] ?? null,
+                'cross_bank_transfer_fee' => $commissions['cross_bank_transfer_fee'] ?? null,
+                'withdrawal_atm_fee' => $commissions['withdrawal_atm_fee'] ?? null,
+                'withdrawal_store_fee' => $commissions['withdrawal_store_fee'] ?? null,
+                'international_iva_rate' => $commissions['international_iva_rate'] ?? null,
+                'isd_rate' => $commissions['isd_rate'] ?? null,
             ]);
 
             return $account->fresh();

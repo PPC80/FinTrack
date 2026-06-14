@@ -16,6 +16,7 @@ class ToggleBasicExpensePaidRequest extends FormRequest
         return [
             'account_id' => ['required_if:is_paid,true', 'nullable', 'integer', 'exists:accounts,id'],
             'is_paid' => ['required', 'boolean'],
+            'payment_method' => ['nullable', 'string', 'in:direct,service_payment,bank_transfer,international'],
         ];
     }
 }

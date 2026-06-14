@@ -15,6 +15,12 @@ export interface Account {
     balance: number;
     is_default: boolean;
     is_deletable: boolean;
+    service_payment_fee: number | null;
+    cross_bank_transfer_fee: number | null;
+    withdrawal_atm_fee: number | null;
+    withdrawal_store_fee: number | null;
+    international_iva_rate: number | null;
+    isd_rate: number | null;
     created_at: string | null;
     updated_at: string | null;
 }
@@ -49,10 +55,13 @@ export interface BasicExpenseTemplate {
     category?: ExpenseCategory;
     name: string;
     default_amount: number;
+    due_day_of_month: number | null;
     sort_order: number;
     created_at: string | null;
     updated_at: string | null;
 }
+
+export type BasicExpensePaymentMethod = 'direct' | 'service_payment' | 'bank_transfer' | 'international';
 
 export interface BasicExpense {
     id: number;
@@ -65,6 +74,9 @@ export interface BasicExpense {
     paid_at: string | null;
     account_id: number | null;
     account: Account | null;
+    payment_method: BasicExpensePaymentMethod | null;
+    commission_amount: number;
+    due_day_of_month: number | null;
     period: string;
     created_at: string | null;
     updated_at: string | null;
@@ -92,6 +104,9 @@ export interface Purchase {
     unit_price: number;
     iva_amount: number;
     total: number;
+    is_bank_transfer: boolean;
+    is_international: boolean;
+    commission_amount: number;
     account_id: number;
     account: Account;
     period: string;
@@ -159,6 +174,10 @@ export interface MiscExpense {
     description: string;
     amount: number;
     is_guilty: boolean;
+    is_taxi: boolean;
+    is_bank_transfer: boolean;
+    is_international: boolean;
+    commission_amount: number;
     account_id: number;
     account: Account;
     period: string;
@@ -173,6 +192,32 @@ export interface ShameSummary {
     guilty_total: number;
     guilty_count: number;
     taxi_total: number;
+    taxi_count: number;
+}
+
+export type TransferType = 'cross_bank_transfer' | 'same_bank_atm' | 'other_bank_atm' | 'store_withdrawal';
+
+export interface AccountTransfer {
+    id: number;
+    source_account_id: number;
+    source_account: Account;
+    destination_account_id: number;
+    destination_account: Account;
+    amount: number;
+    commission_amount: number;
+    transfer_type: TransferType;
+    description: string | null;
+    period: string;
+    transferred_at: string;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface CategoryPeriodBudget {
+    id: number;
+    category_id: number;
+    period: string;
+    amount: number;
 }
 
 export interface TransportMode {

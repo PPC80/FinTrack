@@ -48,6 +48,8 @@ export function LogPurchaseDialog({
         catalog_item_id: '',
         quantity: '1',
         account_id: '',
+        is_bank_transfer: false,
+        is_international: false,
     });
 
     const filteredItems = activeCategoryId
@@ -74,6 +76,25 @@ export function LogPurchaseDialog({
         return { subtotal, ivaAmount, total };
     }, [selectedItem, quantity, ivaRate]);
 
+    const selectedAccount = useMemo(() => {
+        const accountId = form.data.account_id || String(defaultAccountId || 0);
+        return accounts.find((account) => account.id === parseInt(accountId)) ?? null;
+    }, [form.data.account_id, defaultAccountId, accounts]);
+
+    const commissionPreview = useMemo(() => {
+        if (!selectedAccount || !preview) return 0;
+        let commission = 0;
+        if (form.data.is_bank_transfer) {
+            commission += selectedAccount.cross_bank_transfer_fee ?? 0;
+        }
+        if (form.data.is_international) {
+            const ivaCommission = preview.total * ((selectedAccount.international_iva_rate ?? 0) / 100);
+            const isdCommission = preview.total * ((selectedAccount.isd_rate ?? 0) / 100);
+            commission += ivaCommission + isdCommission;
+        }
+        return Math.round(commission * 100) / 100;
+    }, [selectedAccount, preview, form.data.is_bank_transfer, form.data.is_international]);
+
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
 
@@ -81,6 +102,8 @@ export function LogPurchaseDialog({
             catalog_item_id: parseInt(data.catalog_item_id),
             quantity: parseInt(data.quantity),
             account_id: parseInt(data.account_id || String(defaultAccountId || 0)),
+            is_bank_transfer: data.is_bank_transfer,
+            is_international: data.is_international,
         }));
 
         form.post(route('purchases.store', { period: currentPeriod }), {
@@ -179,6 +202,33 @@ export function LogPurchaseDialog({
                         )}
                     </div>
 
+                    <div className="flex flex-wrap items-center gap-4 border-t border-border pt-3">
+                        <div className="flex items-center gap-2">
+                            <input
+                                id="purchase-bank-transfer"
+                                type="checkbox"
+                                checked={form.data.is_bank_transfer}
+                                onChange={(event) => form.setData('is_bank_transfer', event.target.checked)}
+                                className="size-4 rounded border-border"
+                            />
+                            <Label htmlFor="purchase-bank-transfer" className="text-xs font-normal">
+                                Bank Transfer
+                            </Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <input
+                                id="purchase-international"
+                                type="checkbox"
+                                checked={form.data.is_international}
+                                onChange={(event) => form.setData('is_international', event.target.checked)}
+                                className="size-4 rounded border-border"
+                            />
+                            <Label htmlFor="purchase-international" className="text-xs font-normal">
+                                International
+                            </Label>
+                        </div>
+                    </div>
+
                     {preview && (
                         <div className="rounded-lg bg-muted/50 p-3 text-sm">
                             <div className="flex justify-between">
@@ -195,9 +245,15 @@ export function LogPurchaseDialog({
                                     <span>{formatCurrency(preview.ivaAmount)}</span>
                                 </div>
                             )}
+                            {commissionPreview > 0 && (
+                                <div className="flex justify-between text-warning">
+                                    <span>Commission:</span>
+                                    <span>{formatCurrency(commissionPreview)}</span>
+                                </div>
+                            )}
                             <div className="mt-1 flex justify-between border-t border-border pt-1 font-medium">
-                                <span>Total:</span>
-                                <span>{formatCurrency(preview.total)}</span>
+                                <span>Total deducted:</span>
+                                <span>{formatCurrency(preview.total + commissionPreview)}</span>
                             </div>
                         </div>
                     )}

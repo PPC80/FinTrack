@@ -20,6 +20,7 @@ export function CreateExpenseDialog({ open, onOpenChange, categories, currentPer
         category_id: '',
         name: '',
         default_amount: '',
+        due_day_of_month: '',
     });
 
     function handleSubmit(event: FormEvent) {
@@ -29,6 +30,7 @@ export function CreateExpenseDialog({ open, onOpenChange, categories, currentPer
             ...data,
             category_id: parseInt(data.category_id),
             default_amount: parseFloat(data.default_amount),
+            due_day_of_month: data.due_day_of_month ? parseInt(data.due_day_of_month) : null,
         }));
 
         form.post(route('expenses.templates.store', { period: currentPeriod }), {
@@ -99,6 +101,23 @@ export function CreateExpenseDialog({ open, onOpenChange, categories, currentPer
                         />
                         {form.errors.default_amount && (
                             <p className="text-sm text-destructive">{form.errors.default_amount}</p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="expense-due-day">Due Day of Month (optional)</Label>
+                        <Input
+                            id="expense-due-day"
+                            type="number"
+                            value={form.data.due_day_of_month}
+                            onChange={(event) => form.setData('due_day_of_month', event.target.value)}
+                            placeholder="e.g., 15"
+                            min="1"
+                            max="31"
+                            step="1"
+                        />
+                        {form.errors.due_day_of_month && (
+                            <p className="text-sm text-destructive">{form.errors.due_day_of_month}</p>
                         )}
                     </div>
 

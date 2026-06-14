@@ -48,6 +48,14 @@ class AccountController extends Controller
             name: $request->validated('name'),
             initialBalance: (float) $request->validated('initial_balance'),
             isDefault: (bool) $request->validated('is_default', false),
+            commissions: $request->safe()->only([
+                'service_payment_fee',
+                'cross_bank_transfer_fee',
+                'withdrawal_atm_fee',
+                'withdrawal_store_fee',
+                'international_iva_rate',
+                'isd_rate',
+            ]),
         );
 
         return redirect()->route('accounts.index')
@@ -60,6 +68,14 @@ class AccountController extends Controller
             account: $account,
             name: $request->validated('name'),
             isDefault: (bool) $request->validated('is_default', false),
+            commissions: $request->safe()->only([
+                'service_payment_fee',
+                'cross_bank_transfer_fee',
+                'withdrawal_atm_fee',
+                'withdrawal_store_fee',
+                'international_iva_rate',
+                'isd_rate',
+            ]),
         );
 
         return redirect()->route('accounts.index')

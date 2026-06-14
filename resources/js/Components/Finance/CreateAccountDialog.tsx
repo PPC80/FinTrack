@@ -23,6 +23,12 @@ export function CreateAccountDialog({ open, onOpenChange }: CreateAccountDialogP
         name: '',
         initial_balance: '0',
         is_default: false,
+        service_payment_fee: '',
+        cross_bank_transfer_fee: '',
+        withdrawal_atm_fee: '',
+        withdrawal_store_fee: '',
+        international_iva_rate: '',
+        isd_rate: '',
     });
 
     function handleSubmit(event: FormEvent) {
@@ -44,7 +50,7 @@ export function CreateAccountDialog({ open, onOpenChange }: CreateAccountDialogP
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Add Bank Account</DialogTitle>
                     <DialogDescription>
@@ -94,6 +100,86 @@ export function CreateAccountDialog({ open, onOpenChange }: CreateAccountDialogP
                         <Label htmlFor="create-default" className="text-sm font-normal">
                             Set as default payment source
                         </Label>
+                    </div>
+
+                    <div className="border-t border-border pt-4">
+                        <p className="mb-3 text-sm font-medium">Commission Fees</p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="create-service-fee" className="text-xs">Service Payment ($)</Label>
+                                <Input
+                                    id="create-service-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.service_payment_fee}
+                                    onChange={(event) => setData('service_payment_fee', event.target.value)}
+                                    placeholder="0.35"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="create-transfer-fee" className="text-xs">Cross-bank Transfer ($)</Label>
+                                <Input
+                                    id="create-transfer-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.cross_bank_transfer_fee}
+                                    onChange={(event) => setData('cross_bank_transfer_fee', event.target.value)}
+                                    placeholder="0.50"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="create-atm-fee" className="text-xs">ATM Withdrawal ($)</Label>
+                                <Input
+                                    id="create-atm-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.withdrawal_atm_fee}
+                                    onChange={(event) => setData('withdrawal_atm_fee', event.target.value)}
+                                    placeholder="0.50"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="create-store-fee" className="text-xs">Store Withdrawal ($)</Label>
+                                <Input
+                                    id="create-store-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.withdrawal_store_fee}
+                                    onChange={(event) => setData('withdrawal_store_fee', event.target.value)}
+                                    placeholder="0.25"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="create-intl-iva" className="text-xs">International IVA (%)</Label>
+                                <Input
+                                    id="create-intl-iva"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    value={data.international_iva_rate}
+                                    onChange={(event) => setData('international_iva_rate', event.target.value)}
+                                    placeholder="15"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="create-isd" className="text-xs">ISD (%)</Label>
+                                <Input
+                                    id="create-isd"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    value={data.isd_rate}
+                                    onChange={(event) => setData('isd_rate', event.target.value)}
+                                    placeholder="5"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <DialogFooter>

@@ -21,6 +21,9 @@ class Purchase extends Model
         'account_id',
         'period',
         'is_planned',
+        'is_bank_transfer',
+        'is_international',
+        'commission_amount',
         'purchased_at',
     ];
 
@@ -31,7 +34,10 @@ class Purchase extends Model
             'unit_price' => 'decimal:2',
             'iva_amount' => 'decimal:2',
             'total' => 'decimal:2',
+            'commission_amount' => 'decimal:2',
             'is_planned' => 'boolean',
+            'is_bank_transfer' => 'boolean',
+            'is_international' => 'boolean',
             'purchased_at' => 'datetime',
         ];
     }

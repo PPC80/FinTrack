@@ -24,6 +24,12 @@ export function EditAccountDialog({ account, open, onOpenChange }: EditAccountDi
     const { data, setData, put, processing, errors, reset } = useForm({
         name: '',
         is_default: false,
+        service_payment_fee: '',
+        cross_bank_transfer_fee: '',
+        withdrawal_atm_fee: '',
+        withdrawal_store_fee: '',
+        international_iva_rate: '',
+        isd_rate: '',
     });
 
     useEffect(() => {
@@ -31,6 +37,12 @@ export function EditAccountDialog({ account, open, onOpenChange }: EditAccountDi
             setData({
                 name: account.name,
                 is_default: account.is_default,
+                service_payment_fee: account.service_payment_fee?.toString() ?? '',
+                cross_bank_transfer_fee: account.cross_bank_transfer_fee?.toString() ?? '',
+                withdrawal_atm_fee: account.withdrawal_atm_fee?.toString() ?? '',
+                withdrawal_store_fee: account.withdrawal_store_fee?.toString() ?? '',
+                international_iva_rate: account.international_iva_rate?.toString() ?? '',
+                isd_rate: account.isd_rate?.toString() ?? '',
             });
         }
     }, [account]);
@@ -56,11 +68,11 @@ export function EditAccountDialog({ account, open, onOpenChange }: EditAccountDi
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Edit Account</DialogTitle>
                     <DialogDescription>
-                        Update account details.
+                        Update account details and commission fees.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -90,6 +102,86 @@ export function EditAccountDialog({ account, open, onOpenChange }: EditAccountDi
                         <Label htmlFor="edit-default" className="text-sm font-normal">
                             Set as default payment source
                         </Label>
+                    </div>
+
+                    <div className="border-t border-border pt-4">
+                        <p className="mb-3 text-sm font-medium">Commission Fees</p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="edit-service-fee" className="text-xs">Service Payment ($)</Label>
+                                <Input
+                                    id="edit-service-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.service_payment_fee}
+                                    onChange={(event) => setData('service_payment_fee', event.target.value)}
+                                    placeholder="0.35"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="edit-transfer-fee" className="text-xs">Cross-bank Transfer ($)</Label>
+                                <Input
+                                    id="edit-transfer-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.cross_bank_transfer_fee}
+                                    onChange={(event) => setData('cross_bank_transfer_fee', event.target.value)}
+                                    placeholder="0.50"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="edit-atm-fee" className="text-xs">ATM Withdrawal ($)</Label>
+                                <Input
+                                    id="edit-atm-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.withdrawal_atm_fee}
+                                    onChange={(event) => setData('withdrawal_atm_fee', event.target.value)}
+                                    placeholder="0.50"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="edit-store-fee" className="text-xs">Store Withdrawal ($)</Label>
+                                <Input
+                                    id="edit-store-fee"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={data.withdrawal_store_fee}
+                                    onChange={(event) => setData('withdrawal_store_fee', event.target.value)}
+                                    placeholder="0.25"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="edit-intl-iva" className="text-xs">International IVA (%)</Label>
+                                <Input
+                                    id="edit-intl-iva"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    value={data.international_iva_rate}
+                                    onChange={(event) => setData('international_iva_rate', event.target.value)}
+                                    placeholder="15"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="edit-isd" className="text-xs">ISD (%)</Label>
+                                <Input
+                                    id="edit-isd"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    value={data.isd_rate}
+                                    onChange={(event) => setData('isd_rate', event.target.value)}
+                                    placeholder="5"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <DialogFooter>

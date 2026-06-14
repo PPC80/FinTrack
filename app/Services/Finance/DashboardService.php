@@ -8,7 +8,6 @@ use App\Models\IncomeEntry;
 use App\Models\MiscExpense;
 use App\Models\Purchase;
 use App\Models\Trip;
-use App\Models\TransportMode;
 
 class DashboardService
 {
@@ -81,11 +80,9 @@ class DashboardService
             ->where('is_guilty', true)
             ->count();
 
-        $taxiModeIds = TransportMode::where('is_taxi', true)->pluck('id');
-
-        $taxiTotal = (float) Trip::where('period', $period)
-            ->whereIn('transport_mode_id', $taxiModeIds)
-            ->sum('fare_at_time');
+        $taxiTotal = (float) MiscExpense::where('period', $period)
+            ->where('is_taxi', true)
+            ->sum('amount');
 
         return [
             'guilty_total' => $guiltyTotal,
@@ -199,9 +196,9 @@ class DashboardService
         $month = (int) substr($period, 5, 2);
 
         if ($month === 1) {
-            return ($year - 1) . '-12';
+            return ($year - 1).'-12';
         }
 
-        return $year . '-' . str_pad($month - 1, 2, '0', STR_PAD_LEFT);
+        return $year.'-'.str_pad($month - 1, 2, '0', STR_PAD_LEFT);
     }
 }

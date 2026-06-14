@@ -17,6 +17,7 @@ export function EditTemplateDialog({ template, open, onOpenChange }: EditTemplat
     const form = useForm({
         name: '',
         default_amount: '',
+        due_day_of_month: '',
     });
 
     useEffect(() => {
@@ -24,6 +25,7 @@ export function EditTemplateDialog({ template, open, onOpenChange }: EditTemplat
             form.setData({
                 name: template.name,
                 default_amount: String(template.default_amount),
+                due_day_of_month: template.due_day_of_month ? String(template.due_day_of_month) : '',
             });
         }
     }, [template]);
@@ -36,6 +38,7 @@ export function EditTemplateDialog({ template, open, onOpenChange }: EditTemplat
         form.transform((data) => ({
             ...data,
             default_amount: parseFloat(data.default_amount),
+            due_day_of_month: data.due_day_of_month ? parseInt(data.due_day_of_month) : null,
         }));
 
         form.put(route('expenses.templates.update', template.id), {
@@ -79,6 +82,23 @@ export function EditTemplateDialog({ template, open, onOpenChange }: EditTemplat
                         />
                         {form.errors.default_amount && (
                             <p className="text-sm text-destructive">{form.errors.default_amount}</p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="edit-template-due-day">Due Day of Month (optional)</Label>
+                        <Input
+                            id="edit-template-due-day"
+                            type="number"
+                            value={form.data.due_day_of_month}
+                            onChange={(event) => form.setData('due_day_of_month', event.target.value)}
+                            placeholder="e.g., 15"
+                            min="1"
+                            max="31"
+                            step="1"
+                        />
+                        {form.errors.due_day_of_month && (
+                            <p className="text-sm text-destructive">{form.errors.due_day_of_month}</p>
                         )}
                     </div>
 

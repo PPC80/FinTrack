@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { Flame, Trash2 } from 'lucide-react';
+import { Car, Flame, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import {
@@ -14,10 +14,12 @@ import {
 } from '@/Components/ui/alert-dialog';
 import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
-import { type MiscExpense } from '@/types';
+import { type Account, type MiscExpense } from '@/types';
 
 interface MiscExpenseListProps {
     expenses: MiscExpense[];
+    accounts?: Account[];
+    onEdit?: (expense: MiscExpense) => void;
     requestConfirmation?: (action: () => void) => void;
 }
 
@@ -36,7 +38,7 @@ function formatDateTime(dateString: string): string {
     });
 }
 
-export function MiscExpenseList({ expenses, requestConfirmation }: MiscExpenseListProps) {
+export function MiscExpenseList({ expenses, accounts, onEdit, requestConfirmation }: MiscExpenseListProps) {
     const [deletingExpense, setDeletingExpense] = useState<MiscExpense | null>(null);
 
     function handleRequestDelete(expense: MiscExpense) {
@@ -76,6 +78,9 @@ export function MiscExpenseList({ expenses, requestConfirmation }: MiscExpenseLi
                             {expense.is_guilty && (
                                 <Flame className="size-4 shrink-0 text-destructive" />
                             )}
+                            {expense.is_taxi && (
+                                <Car className="size-4 shrink-0 text-warning" />
+                            )}
                             <div>
                                 <div className="flex items-center gap-2">
                                     <span className="font-medium">{expense.description}</span>
@@ -84,19 +89,51 @@ export function MiscExpenseList({ expenses, requestConfirmation }: MiscExpenseLi
                                             guilty
                                         </Badge>
                                     )}
+                                    {expense.is_taxi && (
+                                        <Badge variant="outline" className="text-xs">
+                                            taxi
+                                        </Badge>
+                                    )}
+                                    {expense.is_bank_transfer && (
+                                        <Badge variant="secondary" className="text-xs">
+                                            transfer
+                                        </Badge>
+                                    )}
+                                    {expense.is_international && (
+                                        <Badge variant="secondary" className="text-xs">
+                                            intl
+                                        </Badge>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <span>{formatDateTime(expense.spent_at)}</span>
                                     <span>&middot;</span>
                                     <span>{expense.account.name}</span>
+                                    {expense.commission_amount > 0 && (
+                                        <>
+                                            <span>&middot;</span>
+                                            <span className="text-warning">fee: {formatCurrency(expense.commission_amount)}</span>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                             <span className="text-lg font-semibold tabular-nums">
                                 {formatCurrency(expense.amount)}
                             </span>
+                            {onEdit && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-8 text-muted-foreground hover:text-primary"
+                                    onClick={() => onEdit(expense)}
+                                    aria-label={`Edit ${expense.description}`}
+                                >
+                                    <Pencil className="size-4" />
+                                </Button>
+                            )}
                             <Button
                                 variant="ghost"
                                 size="icon"

@@ -18,6 +18,8 @@ class BasicExpense extends Model
         'is_paid',
         'paid_at',
         'account_id',
+        'payment_method',
+        'commission_amount',
         'period',
     ];
 
@@ -25,6 +27,7 @@ class BasicExpense extends Model
     {
         return [
             'amount' => 'decimal:2',
+            'commission_amount' => 'decimal:2',
             'is_paid' => 'boolean',
             'paid_at' => 'datetime',
         ];
