@@ -4,6 +4,7 @@ use App\Http\Controllers\Finance\AccountController;
 use App\Http\Controllers\Finance\BasicExpenseController;
 use App\Http\Controllers\Finance\ExpenseCategoryController;
 use App\Http\Controllers\Finance\PurchaseController;
+use App\Http\Controllers\Finance\TransportationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -53,6 +54,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/planned-items/{plannedItem}', [PurchaseController::class, 'updatePlannedItem'])->name('planned-items.update');
         Route::delete('/planned-items/{plannedItem}', [PurchaseController::class, 'destroyPlannedItem'])->name('planned-items.destroy');
         Route::post('/planned-items/{plannedItem}/purchase', [PurchaseController::class, 'purchasePlannedItem'])->name('planned-items.purchase');
+
+        Route::get('/transportation', [TransportationController::class, 'index'])->name('transportation.index');
+        Route::post('/transportation/modes', [TransportationController::class, 'storeMode'])->name('transportation.modes.store');
+        Route::put('/transportation/modes/{transportMode}', [TransportationController::class, 'updateMode'])->name('transportation.modes.update');
+        Route::delete('/transportation/modes/{transportMode}', [TransportationController::class, 'destroyMode'])->name('transportation.modes.destroy');
+        Route::post('/transportation/modes/{transportMode}/trip', [TransportationController::class, 'logTrip'])->name('transportation.trips.store');
+        Route::delete('/transportation/trips/{trip}', [TransportationController::class, 'destroyTrip'])->name('transportation.trips.destroy');
+        Route::post('/transportation/topups', [TransportationController::class, 'storeTopup'])->name('transportation.topups.store');
     });
 });
 

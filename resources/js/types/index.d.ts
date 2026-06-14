@@ -149,6 +149,49 @@ export interface BalanceSummary {
 export interface FlashMessages {
     success: string | null;
     error: string | null;
+    warning: string | null;
+}
+
+export interface TransportMode {
+    id: number;
+    name: string;
+    fare: number;
+    deducts_from_metro: boolean;
+    default_account_id: number | null;
+    default_account: Account | null;
+    sort_order: number;
+    is_active: boolean;
+    trip_count: number;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface Trip {
+    id: number;
+    transport_mode_id: number;
+    transport_mode: TransportMode;
+    fare_at_time: number;
+    account_id: number;
+    account: Account;
+    period: string;
+    taken_at: string;
+    created_at: string | null;
+}
+
+export interface MetroTopup {
+    id: number;
+    amount: number;
+    source_account_id: number;
+    source_account: Account;
+    period: string;
+    created_at: string | null;
+}
+
+export interface TransportationSummary {
+    total_trips: number;
+    total_cost: number;
+    total_topups: number;
+    mode_breakdown: Record<number, { count: number; cost: number }>;
 }
 
 export type PageProps<

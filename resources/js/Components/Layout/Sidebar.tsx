@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import {
+    Bus,
     ChevronsLeft,
     ChevronsRight,
     LayoutDashboard,
@@ -82,6 +83,13 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     icon={ShoppingCart}
                     label="Purchases"
                     isActive={url.startsWith('/finance/purchases')}
+                    isCollapsed={isCollapsed}
+                />
+                <SidebarItem
+                    href="/finance/transportation"
+                    icon={Bus}
+                    label="Transportation"
+                    isActive={url.startsWith('/finance/transportation')}
                     isCollapsed={isCollapsed}
                 />
 
